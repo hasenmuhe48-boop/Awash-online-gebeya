@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Awash Online Gebeya</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* ===== መሰረታዊ ቅጥ ===== */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
+    body { background:#f8fafc; padding:0 16px 40px; }
+
+    /* ===== ራስጌ ===== */
+    .header {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#0b2b4f; color:white; padding:12px 20px;
+      border-radius:0 0 20px 20px; margin:0 -16px 20px;
+      flex-wrap:wrap; gap:8px; position:sticky; top:0; z-index:100;
+      box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    }
+    .header-left { display:flex; align-items:center; gap:14px; }
+    .hamburger { font-size:26px; cursor:pointer; background:none; border:none; color:white; padding:4px 8px; }
+    .hamburger:hover { transform:scale(1.1); }
+    .header-title { font-size:20px; font-weight:700; }
+    .header-title small { font-size:13px; font-weight:400; opacity:0.85; display:block; }
+    .header-contact { font-size:14px; background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:30px; display:flex; align-items:center; gap:8px; }
+
+    /* ===== ሳይድ ሜኑ ===== */
+    .sidebar {
+      position:fixed; top:0; left:-320px; width:300px; height:100%;
+      background:white; box-shadow:4px 0 20px rgba(0,0,0,0.2);
+      transition:0.3s ease; z-index:999; padding:20px 0; overflow-y:auto;
+    }
+    .sidebar.open { left:0; }
+    .sidebar-header { padding:0 20px 16px; border-bottom:2px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; }
+    .sidebar-header h2 { font-size:20px; color:#0b2b4f; }
+    .close-sidebar { font-size:28px; cursor:pointer; background:none; border:none; color:#6b7280; }
+    .sidebar-category { list-style:none; padding:10px 0; }
+    .sidebar-category li { padding:12px 24px; border-bottom:1px solid #f1f5f9; cursor:pointer; transition:0.2s; font-weight:500; color:#1e293b; }
+    .sidebar-category li:hover { background:#eef2ff; color:#2563eb; padding-left:28px; }
+    .sidebar-category li i { width:28px; color:#2563eb; }
+    .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:998; display:none; }
+    .overlay.show { display:block; }
+
+    /* ===== ፍለጋ ===== */
+    .search-section {
+      display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+      background:white; padding:12px 18px; border-radius:40px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06); margin-bottom:16px;
+    }
+    .search-box { flex:1; display:flex; align-items:center; background:#f1f5f9; border-radius:30px; padding:4px 16px; min-width:180px; }
+    .search-box input { border:none; background:transparent; padding:10px 6px; width:100%; outline:none; font-size:15px; }
+    .search-box i { color:#64748b; font-size:18px; }
+    .cart-icon {
+      font-size:24px; color:#0b2b4f; cursor:pointer; position:relative;
+      background:#f1f5f9; width:46px; height:46px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      border:none; transition:0.2s;
+    }
+    .cart-icon:hover { background:#e2e8f0; }
+    .cart-badge {
+      position:absolute; top:-4px; right:-4px; background:#dc2626; color:white;
+      font-size:12px; font-weight:bold; width:22px; height:22px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    .category-strip {
+      display:flex; flex-wrap:wrap; gap:6px 12px; margin:4px 0 16px;
+      padding:6px 0; border-bottom:1px solid #e5e7eb;
+      overflow-x:auto; white-space:nowrap; scrollbar-width:thin;
+    }
+    .category-strip span {
+      background:#f1f5f9; padding:6px 16px; border-radius:40px;
+      font-size:13px; font-weight:500; color:#1e293b; cursor:pointer;
+      transition:0.2s; display:inline-block;
+    }
+    .category-strip span:hover { background:#0b2b4f; color:white; }
+
+    /* ===== ወቅታዊ ፖስቶች ===== */
+    .featured-section {
+      margin:12px 0 24px; background:white; border-radius:24px;
+      padding:16px 12px; box-shadow:0 2px 10px rgba(0,0,0,0.04);
+    }
+    .featured-title {
+      font-size:18px; font-weight:700; color:#0b2b4f;
+      margin-bottom:12px; display:flex; align-items:center; gap:10px;
+    }
+    .featured-title i { color:#f59e0b; }
+    .featured-scroll {
+      display:flex; gap:16px; overflow-x:auto; padding:8px 4px 16px;
+      scroll-snap-type:x mandatory; scroll-behavior:smooth;
+    }
+    .featured-scroll::-webkit-scrollbar { height:4px; }
+    .featured-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:10px; }
+    .featured-card {
+      min-width:200px; max-width:220px; background:#f8fafc;
+      border-radius:18px; padding:12px; scroll-snap-align:start;
+      text-align:center; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    }
+    .featured-card img { width:100%; height:150px; object-fit:cover; border-radius:14px; background:#e5e7eb; }
+    .featured-card h4 { margin:8px 0 4px; font-size:16px; color:#1e293b; }
+    .featured-card p { font-size:14px; color:#475569; margin-bottom:4px; }
+    .featured-card .price { font-weight:bold; color:#16a34a; font-size:17px; margin-bottom:8px; }
+    .featured-card .buy-now-btn {
+      background:#f59e0b; border:none; padding:8px 0; border-radius:40px;
+      font-weight:700; color:#0b2b4f; cursor:pointer; width:100%;
+      transition:0.2s; font-size:14px;
+    }
+    .featured-card .buy-now-btn:hover { background:#d97706; transform:scale(1.02); }
+
+    /* ===== የምርት ፍርግርግ ===== */
+    .products-grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(170px,1fr));
+      gap:18px; margin-top:10px;
+    }
+    .product-card {
+      background:white; border-radius:18px; padding:12px 10px 16px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06); transition:0.25s;
+      text-align:center; display:flex; flex-direction:column;
+      border:1px solid #f1f5f9;
+    }
+    .product-card:hover { transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.08); }
+    .product-card img { width:100%; height:140px; object-fit:cover; border-radius:14px; background:#e5e7eb; }
+    .product-card h3 { font-size:15px; margin:10px 0 4px; color:#0f172a; font-weight:600; }
+    .product-card .price { font-size:18px; font-weight:700; color:#16a34a; margin:4px 0 10px; }
+    .product-card .price small { font-size:12px; font-weight:400; color:#64748b; }
+    .product-card .buy-btn {
+      background:#f59e0b; border:none; padding:10px 0; border-radius:40px;
+      font-weight:700; color:#0b2b4f; cursor:pointer; transition:0.25s;
+      margin-top:auto; font-size:15px; display:flex; align-items:center;
+      justify-content:center; gap:6px;
+    }
+    .product-card .buy-btn:hover { background:#d97706; transform:scale(1.02); }
+
+    .section-title {
+      font-size:20px; font-weight:700; color:#0b2b4f;
+      margin:28px 0 12px; border-left:5px solid #f59e0b; padding-left:14px;
+    }
+
+    /* ===== የጋሪ ሞዳል ===== */
+    .cart-modal {
+      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);
+      justify-content:center; align-items:center; z-index:1100;
+    }
+    .cart-modal.active { display:flex; }
+    .cart-content {
+      background:white; max-width:500px; width:92%; max-height:80vh;
+      padding:24px; border-radius:28px; overflow-y:auto;
+      position:relative;
+    }
+    .cart-content h2 { border-bottom:2px solid #e5e7eb; padding-bottom:12px; margin-bottom:16px; color:#0b2b4f; }
+    .cart-item { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f1f5f9; align-items:center; }
+    .cart-item .item-info { flex:1; }
+    .cart-item .item-info strong { font-size:15px; }
+    .cart-item .item-info small { display:block; color:#64748b; }
+    .cart-item .qty-control { display:flex; align-items:center; gap:8px; }
+    .cart-item .qty-control button { background:#e5e7eb; border:none; width:28px; height:28px; border-radius:8px; font-weight:bold; cursor:pointer; }
+    .cart-item .qty-control button.danger { background:#fee2e2; color:#b91c1c; }
+    .cart-total { font-size:22px; font-weight:700; text-align:right; margin:18px 0 16px; color:#0b2b4f; }
+    .cart-actions { display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; }
+    .cart-actions button { padding:10px 24px; border:none; border-radius:40px; font-weight:600; cursor:pointer; transition:0.2s; }
+    .cart-actions .close-cart { background:#e5e7eb; color:#1e293b; }
+    .cart-actions .checkout-btn { background:#0b2b4f; color:white; }
+    .cart-actions .checkout-btn:hover { background:#1e3a5f; }
+    .empty-cart { text-align:center; padding:30px 0; color:#64748b; }
+
+    /* ===== የደንበኛ ፎርም ===== */
+    .form-modal {
+      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
+      justify-content:center; align-items:center; z-index:1200;
+    }
+    .form-modal.active { display:flex; }
+    .form-content {
+      background:white; max-width:460px; width:92%; padding:28px 24px;
+      border-radius:28px; position:relative; max-height:90vh; overflow-y:auto;
+    }
+    .form-content h2 { margin-bottom:16px; color:#0b2b4f; }
+    .form-content label { display:block; margin:12px 0 4px; font-weight:600; color:#1e293b; }
+    .form-content input[type="text"], 
+    .form-content input[type="tel"] { 
+      width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:40px; 
+      font-size:15px; outline:none; 
+    }
+    .form-content input:focus { border-color:#0b2b4f; }
+    .form-content .file-upload {
+      width:100%; padding:10px 12px; border:2px dashed #cbd5e1; border-radius:40px;
+      background:#f8fafc; cursor:pointer; margin:6px 0 8px;
+    }
+    .form-content .file-upload input[type="file"] { width:100%; border:none; outline:none; background:transparent; }
+    
+    /* የቦታ ቁልፍ */
+    .location-btn {
+      width:100%; padding:12px; border-radius:40px; background:#0b2b4f; 
+      color:white; border:none; font-weight:600; cursor:pointer; 
+      transition:0.2s; font-size:15px; margin:4px 0 8px;
+    }
+    .location-btn:hover { background:#1e3a5f; }
+    .location-status { font-size:13px; color:#475569; margin-top:4px; padding:8px 12px; background:#f1f5f9; border-radius:20px; text-align:center; }
+    .location-status.success { background:#dcfce7; color:#166534; }
+    .location-status.error { background:#fee2e2; color:#991b1b; }
+
+    .form-content .payment-info {
+      background:#f0fdf4; border:2px solid #bbf7d0; border-radius:16px;
+      padding:14px; margin:14px 0 12px; text-align:center;
+    }
+    .form-content .payment-info p { font-size:15px; color:#065f46; font-weight:500; }
+    .form-content .payment-info .account { font-size:18px; font-weight:700; color:#0b2b4f; }
+    .form-content .extra-info {
+      background:#fef3c7; border:2px solid #fcd34d; border-radius:16px;
+      padding:12px; margin:12px 0 16px; text-align:center;
+      font-size:14px; color:#92400e;
+    }
+    .form-content .extra-info strong { color:#78350f; }
+    .form-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:12px; flex-wrap:wrap; }
+    .form-actions button { padding:10px 24px; border:none; border-radius:40px; font-weight:600; cursor:pointer; }
+    .form-actions .cancel-form { background:#e5e7eb; color:#1e293b; }
+    .form-actions .submit-form { background:#0b2b4f; color:white; }
+    .form-actions .submit-form:hover { background:#1e3a5f; }
+
+    @media (max-width:640px) {
+      .header-title { font-size:16px; }
+      .header-contact { font-size:12px; padding:4px 10px; }
+      .products-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+      .featured-card { min-width:160px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ====== ራስጌ ====== -->
+<header class="header">
+  <div class="header-left">
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="header-title">
+      አዋሽ ኦንላይን ገበያ
+      <small>Awash Online Gebeya</small>
+    </div>
+  </div>
+  <div class="header-contact"><i class="fas fa-phone-alt"></i> +251944530535</div>
+</header>
+
+<!-- ====== ሳይድ ሜኑ ====== -->
+<div class="overlay" id="overlay"></div>
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2><i class="fas fa-store-alt" style="color:#0b2b4f;"></i> ምድቦች</h2>
+    <button class="close-sidebar" id="closeSidebarBtn">&times;</button>
+  </div>
+  <ul class="sidebar-category" id="sidebarCategoryList"></ul>
+</nav>
+
+<!-- ====== ፍለጋ ====== -->
+<div class="search-section">
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="እቃ ፈልግ..." />
+  </div>
+  <button class="cart-icon" id="cartIconBtn">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-badge" id="cartBadge">0</span>
+  </button>
+</div>
+
+<!-- ====== ካታጎሪ ስትሪፕ ====== -->
+<div class="category-strip" id="categoryStrip"></div>
+
+<!-- ====== ወቅታዊ ፖስቶች ====== -->
+<section class="featured-section">
+  <div class="featured-title">
+    <i class="fas fa-bolt"></i> ወቅታዊ እቃዎች
+    <span style="font-size:14px; font-weight:400; color:#64748b; margin-left:auto;">← ወደ ጎን ይንሸራተቱ →</span>
+  </div>
+  <div class="featured-scroll" id="featuredScroll"></div>
+</section>
+
+<!-- ====== ዋና ምርቶች ====== -->
+<h2 class="section-title" id="activeCategoryTitle">ሁሉም እቃዎች</h2>
+<div class="products-grid" id="productGrid"></div>
+
+<!-- ====== የጋሪ ሞዳል ====== -->
+<div class="cart-modal" id="cartModal">
+  <div class="cart-content">
+    <h2><i class="fas fa-shopping-cart"></i> ጋሪ</h2>
+    <div id="cartItemsList"><div class="empty-cart">ጋሪዎ ባዶ ነው</div></div>
+    <div class="cart-total" id="cartTotal">ጠቅላላ፦ 0 ብር</div>
+    <div class="cart-actions">
+      <button class="close-cart" id="closeCartBtn">ዝጋ</button>
+      <button class="checkout-btn" id="checkoutBtn">✅ ትዕዛዝ አስፈጽም</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== የደንበኛ መረጃ ፎርም ====== -->
+<div class="form-modal" id="checkoutFormModal">
+  <div class="form-content">
+    <h2>📋 የደንበኛ መረጃ ይሙሉ</h2>
+    <form id="checkoutForm" enctype="multipart/form-data">
+      <label>ሙሉ ስም</label>
+      <input type="text" id="custName" placeholder="ለምሳሌ፡ አበበ በቀለ" required />
+
+      <label>ስልክ ቁጥር</label>
+      <input type="tel" id="custPhone" placeholder="09XXXXXXXX" required />
+
+      <label>አድራሻ (ከተማ/ክፍለ ከተማ)</label>
+      <input type="text" id="custAddress" placeholder="ለምሳሌ፡ አዲስ አበባ፣ ቦሌ" required />
+
+      <!-- ====== የቦታ (GPS) መጫኛ ====== -->
+      <label>📍 የአሁኑ ቦታ (አማራጭ)</label>
+      <button type="button" class="location-btn" id="getLocationBtn">
+        <i class="fas fa-map-marker-alt"></i> የአሁኑን ቦታዬን ላክ
+      </button>
+      <div class="location-status" id="locationStatus">⏳ ቦታ አልተመረጠም</div>
+      <input type="hidden" id="custLat" value="" />
+      <input type="hidden" id="custLng" value="" />
+
+      <!-- የስክሪንሾት መጫኛ -->
+      <label>📎 የክፍያ ደረሰኝ (Screenshot) ያስገቡ</label>
+      <div class="file-upload">
+        <input type="file" id="receiptFile" accept="image/*" />
+      </div>
+
+      <!-- የCBE አካውንት መረጃ -->
+      <div class="payment-info">
+        <p>💳 ክፍያ ወደዚህ አካውንት ያስገቡ፦</p>
+        <div class="account">CBE: 1000743235561</div>
+        <div style="font-size:14px; color:#0b2b4f;">ስም፡ Hassen Mehamed</div>
+      </div>
+
+      <!-- ተጨማሪ መረጃ -->
+      <div class="extra-info">
+        📌 <strong>ደረሰኙን ይላኩ</strong> ለተጨማሪ መረጃ <strong>+251944530534</strong> ይደውሉ
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="cancel-form" id="cancelFormBtn">ዝጋ</button>
+        <button type="submit" class="submit-form">✅ ከፍያለሁ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ======================== የቴሌግራም ቦት መረጃ ========================
+// ⚠️ እዚህ የራስዎን ቶከን እና ቻት አይዲ ያስገቡ
+const BOT_TOKEN = 'YOUR_BOT_TOKEN';      // ለምሳሌ: '123456:ABC-DEF'
+const CHAT_ID = 'YOUR_CHAT_ID';          // ለምሳሌ: '987654321'
+
+// ======================== መረጃ ========================
+const CATEGORIES = [
+  "ሁሉም", "ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", "የውበት መጠበቂያ", "ኤሌክትሮኒክስ",
+  "የቤት እቃ", "የግንባታ እቃዎች", "ሱፐር ማርኬት", "የሴት አልባሳት",
+  "የወንዶች አልባሳት", "የህፃን ወንዶች አልባሳት", "የህፃን ሴቶች አልባሳት",
+  "የልጆች መጫወቻ", "የትምህርት ቤት ቁሳቁሶች"
+];
+
+const PRODUCTS = [
+  { id:1, name:"ስማርት ብርሃን መቆጣጠሪያ", price:1200, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/smart1/300/300" },
+  { id:2, name:"አውቶማቲክ እጥበት መሳሪያ", price:2500, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/auto1/300/300" },
+  { id:3, name:"የፊት መጠበቂያ ክሬም", price:450, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/cream1/300/300" },
+  { id:4, name:"ተፈጥሯዊ ዘይት", price:600, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/oil1/300/300" },
+  { id:5, name:"ስማርት ስልክ 128GB", price:18900, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/phoneX/300/300" },
+  { id:6, name:"የጆሮ ማዳመጫ ብሉቱዝ", price:3200, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/headX/300/300" },
+  { id:7, name:"ምቹ ሶፋ (3 ሰው)", price:8500, category:"የቤት እቃ", image:"https://picsum.photos/seed/sofa1/300/300" },
+  { id:8, name:"የእንጨት ጠረጴዛ", price:4200, category:"የቤት እቃ", image:"https://picsum.photos/seed/table1/300/300" },
+  { id:9, name:"ሲሚንቶ 50ኪግ", price:800, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/cement1/300/300" },
+  { id:10, name:"ብረት ማጠፊያ", price:1500, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/iron1/300/300" },
+  { id:11, name:"የበቆሎ ዱቄት 5ኪግ", price:300, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/flour1/300/300" },
+  { id:12, name:"የወተት ቅቤ 1ኪግ", price:450, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/butter1/300/300" },
+  { id:13, name:"የሴቶች ቀሚስ (ካታን)", price:1200, category:"የሴት አልባሳት", image:"https://picsum.photos/seed/dress1/300/300" },
+  { id:14, name:"የወንዶች ሸሚዝ", price:800, category:"የወንዶች አልባሳት", image:"https://picsum.photos/seed/shirt1/300/300" },
+  { id:15, name:"የልጅ ሱሪ (ቦይ)", price:500, category:"የህፃን ወንዶች አልባሳት", image:"https://picsum.photos/seed/kidboy1/300/300" },
+  { id:16, name:"የልጅ ቀሚስ (ገርል)", price:550, category:"የህፃን ሴቶች አልባሳት", image:"https://picsum.photos/seed/kidgirl1/300/300" },
+  { id:17, name:"የርቀት መቆጣጠሪያ መኪና", price:700, category:"የልጆች መጫወቻ", image:"https://picsum.photos/seed/toycar1/300/300" },
+  { id:18, name:"ማስታወሻ ደብተር (A4)", price:150, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/notebook1/300/300" },
+  { id:19, name:"ባለቀለም እርሳስ ስብስብ", price:280, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/pencil1/300/300" },
+];
+
+const FEATURED = [
+  { name:"ለተማሪ ላፕቶፕ ቦርሳ", desc:"ልዩ ቅናሽ", price:1800, image:"https://picsum.photos/seed/feat1/400/300" },
+  { name:"ወንዶች ስፖርት ጫማ", desc:"አዲስ ሞዴል", price:3500, image:"https://picsum.photos/seed/feat2/400/300" },
+  { name:"የሴቶች የእጅ ቦርሳ", desc:"ከቆዳ", price:2200, image:"https://picsum.photos/seed/feat3/400/300" },
+  { name:"ህፃናት መጫወቻ ስብስብ", desc:"ደህንነቱ የተጠበቀ", price:950, image:"https://picsum.photos/seed/feat4/400/300" },
+];
+
+// ======================== ግሎባል ========================
+let cart = JSON.parse(localStorage.getItem('awashCart')) || [];
+let currentCategory = "ሁሉም";
+
+// DOM refs
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+const sidebarCategoryList = document.getElementById('sidebarCategoryList');
+const categoryStrip = document.getElementById('categoryStrip');
+const productGrid = document.getElementById('productGrid');
+const featuredScroll = document.getElementById('featuredScroll');
+const searchInput = document.getElementById('searchInput');
+const cartBadge = document.getElementById('cartBadge');
+const cartIconBtn = document.getElementById('cartIconBtn');
+const cartModal = document.getElementById('cartModal');
+const closeCartBtn = document.getElementById('closeCartBtn');
+const cartItemsList = document.getElementById('cartItemsList');
+const cartTotal = document.getElementById('cartTotal');
+const checkoutBtn = document.getElementById('checkoutBtn');
+const activeCategoryTitle = document.getElementById('activeCategoryTitle');
+const checkoutFormModal = document.getElementById('checkoutFormModal');
+const cancelFormBtn = document.getElementById('cancelFormBtn');
+const checkoutForm = document.getElementById('checkoutForm');
+const custName = document.getElementById('custName');
+const custPhone = document.getElementById('custPhone');
+const custAddress = document.getElementById('custAddress');
+const receiptFile = document.getElementById('receiptFile');
+const getLocationBtn = document.getElementById('getLocationBtn');
+const locationStatus = document.getElementById('locationStatus');
+const custLat = document.getElementById('custLat');
+const custLng = document.getElementById('custLng');
+
+// ======================== የጂፒኤስ ተግባር ========================
+getLocationBtn.addEventListener('click', function() {
+  // ብራውዘሩ ጂፒኤስ እንደሚደግፍ ያረጋግጡ
+  if (!navigator.geolocation) {
+    locationStatus.textContent = '❌ ይህ አሳሽ የጂፒኤስ አገልግሎት አይደግፍም።';
+    locationStatus.className = 'location-status error';
+    return;
+  }
+
+  locationStatus.textContent = '⏳ ቦታ እየተፈለገ ነው... እባክዎ ይጠብቁ...';
+  locationStatus.className = 'location-status';
+
+  // ትክክለኛ የጂፒኤስ ጥያቄ
+  navigator.geolocation.getCurrentPosition(
+    // ስኬት
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      custLat.value = lat;
+      custLng.value = lng;
+      const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+      locationStatus.innerHTML = `✅ ቦታ ተመዝግቧል! <a href="${mapsLink}" target="_blank" style="color:#0b2b4f; font-weight:bold;">(እዚህ ይመልከቱ)</a>`;
+      locationStatus.className = 'location-status success';
+    },
+    // ስህተት
+    (error) => {
+      let msg = '❌ ቦታ ማግኘት አልተቻለም። ';
+      switch(error.code) {
+        case 1: // PERMISSION_DENIED
+          msg += 'እባክዎ የጂፒኤስ ፍቃድ ይስጡ! (ብራውዘሩ ፍቃድ ይጠይቃል)';
+          break;
+        case 2: // POSITION_UNAVAILABLE
+          msg += 'የጂፒኤስ ምልክት አልተገኘም። እባክዎ ከቤት ውጭ ይሞክሩ ወይም ጂፒኤስን ያብሩ።';
+          break;
+        case 3: // TIMEOUT
+          msg += 'ጊዜው አልፏል። እባክዎ ዳግም ይሞክሩ።';
+          break;
+        default:
+          msg += 'ያልታወቀ ስህተት። እባክዎ ዳግም ይሞክሩ።';
+      }
+      locationStatus.textContent = msg;
+      locationStatus.className = 'location-status error';
+      custLat.value = '';
+      custLng.value = '';
+    },
+    { 
+      enableHighAccuracy: true, 
+      timeout: 15000,        // 15 ሰከንድ
+      maximumAge: 0 
+    }
+  );
+});
+
+// ======================== ካታጎሪ እና ምርቶች ========================
+function renderCategories() {
+  sidebarCategoryList.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const li = document.createElement('li');
+    li.innerHTML = `<i class="fas fa-tag"></i> ${cat}`;
+    li.addEventListener('click', () => { setCategory(cat); closeSidebar(); });
+    sidebarCategoryList.appendChild(li);
+  });
+  categoryStrip.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const span = document.createElement('span');
+    span.textContent = cat;
+    span.addEventListener('click', () => setCategory(cat));
+    if (cat === currentCategory) { span.style.background = '#0b2b4f'; span.style.color = 'white'; }
+    categoryStrip.appendChild(span);
+  });
+}
+
+function renderProducts(category = currentCategory, searchTerm = '') {
+  let filtered = PRODUCTS;
+  if (category !== 'ሁሉም') filtered = filtered.filter(p => p.category === category);
+  if (searchTerm.trim()) {
+    const term = searchTerm.trim().toLowerCase();
+    filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term));
+  }
+  productGrid.innerHTML = '';
+  if (filtered.length === 0) {
+    productGrid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:30px; color:#64748b;">ምንም እቃ አልተገኘም</p>`;
+    return;
+  }
+  filtered.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <img src="${p.image}" alt="${p.name}" loading="lazy" />
+      <h3>${p.name}</h3>
+      <div class="price">${p.price.toLocaleString()} <small>ብር</small></div>
+      <button class="buy-btn" data-id="${p.id}"><i class="fas fa-shopping-bag"></i> ከፍያለሁ</button>
+    `;
+    productGrid.appendChild(card);
+  });
+  document.querySelectorAll('.buy-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(btn.dataset.id);
+      const product = PRODUCTS.find(p => p.id === id);
+      if (product) addToCart(product);
+    });
+  });
+  activeCategoryTitle.textContent = category === 'ሁሉም' ? 'ሁሉም እቃዎች' : category;
+}
+
+function renderFeatured() {
+  featuredScroll.innerHTML = '';
+  FEATURED.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'featured-card';
+    div.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" loading="lazy" />
+      <h4>${item.name}</h4>
+      <p>${item.desc}</p>
+      <div class="price">${item.price.toLocaleString()} ብር</div>
+      <button class="buy-now-btn" data-name="${item.name}" data-price="${item.price}">
+        🛒 ይግዙ
+      </button>
+    `;
+    featuredScroll.appendChild(div);
+  });
+  document.querySelectorAll('.featured-card .buy-now-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const name = this.dataset.name;
+      const price = parseInt(this.dataset.price);
+      const product = PRODUCTS.find(p => p.name === name && p.price === price);
+      if (product) {
+        addToCart(product);
+      } else {
+        const newProduct = { id: Date.now(), name, price, category: 'ወቅታዊ', image: this.closest('.featured-card').querySelector('img').src };
+        addToCart(newProduct);
+      }
+    });
+  });
+}
+
+function setCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('#categoryStrip span').forEach(el => {
+    el.style.background = el.textContent === cat ? '#0b2b4f' : '#f1f5f9';
+    el.style.color = el.textContent === cat ? 'white' : '#1e293b';
+  });
+  renderProducts(cat, searchInput.value);
+}
+
+// ======================== የጋሪ ስራዎች ========================
+function addToCart(product) {
+  const existing = cart.find(item => item.id === product.id);
+  if (existing) { existing.quantity += 1; }
+  else { cart.push({ ...product, quantity: 1 }); }
+  saveCart(); updateBadge();
+  alert(`✅ ${product.name} ወደ ጋሪ ተጨምሯል!`);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  saveCart(); updateBadge(); renderCartModal();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.quantity += delta;
+  if (item.quantity <= 0) { removeFromCart(id); return; }
+  saveCart(); updateBadge(); renderCartModal();
+}
+
+function saveCart() { localStorage.setItem('awashCart', JSON.stringify(cart)); }
+function updateBadge() {
+  const total = cart.reduce((sum, i) => sum + i.quantity, 0);
+  cartBadge.textContent = total;
+}
+
+function renderCartModal() {
+  if (cart.length === 0) {
+    cartItemsList.innerHTML = `<div class="empty-cart">🛒 ጋሪዎ ባዶ ነው</div>`;
+    cartTotal.textContent = 'ጠቅላላ፦ 0 ብር';
+    return;
+  }
+  let html = '', total = 0;
+  cart.forEach(item => {
+    const subtotal = item.price * item.quantity;
+    total += subtotal;
+    html += `
+      <div class="cart-item">
+        <div class="item-info"><strong>${item.name}</strong><small>${item.price.toLocaleString()} ብር × ${item.quantity}</small></div>
+        <div class="qty-control">
+          <button onclick="changeQty(${item.id}, -1)">−</button>
+          <span style="min-width:24px;text-align:center;">${item.quantity}</span>
+          <button onclick="changeQty(${item.id}, 1)">+</button>
+          <button class="danger" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    `;
+  });
+  cartItemsList.innerHTML = html;
+  cartTotal.textContent = `ጠቅላላ፦ ${total.toLocaleString()} ብር`;
+}
+
+function openCartModal() { renderCartModal(); cartModal.classList.add('active'); }
+function closeCartModal() { cartModal.classList.remove('active'); }
+
+cartIconBtn.addEventListener('click', openCartModal);
+closeCartBtn.addEventListener('click', closeCartModal);
+cartModal.addEventListener('click', (e) => { if (e.target === cartModal) closeCartModal(); });
+
+// ======================== ፍለጋ ========================
+searchInput.addEventListener('input', function() {
+  renderProducts(currentCategory, this.value);
+});
+
+// ======================== ሳይድ ሜኑ ========================
+function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+hamburgerBtn.addEventListener('click', openSidebar);
+closeSidebarBtn.addEventListener('click', closeSidebar);
+overlay.addEventListener('click', closeSidebar);
+
+// ======================== የቼክአውት ፎርም ========================
+checkoutBtn.addEventListener('click', function() {
+  if (cart.length === 0) {
+    alert('እባክዎ መጀመሪያ እቃዎችን ወደ ጋሪ ይጨምሩ!');
+    return;
+  }
+  checkoutFormModal.classList.add('active');
+  // ፎርሙን አጽዳ (ጂፒኤስ ግን ይቆያል)
+  custName.value = ''; custPhone.value = ''; custAddress.value = ''; receiptFile.value = '';
+});
+
+cancelFormBtn.addEventListener('click', function() {
+  checkoutFormModal.classList.remove('active');
+});
+
+// ======================== ፎርሙ ሲላክ ========================
+checkoutForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const name = custName.value.trim();
+  const phone = custPhone.value.trim();
+  const address = custAddress.value.trim();
+  const file = receiptFile.files[0];
+  const lat = custLat.value.trim();
+  const lng = custLng.value.trim();
+
+  // ማረጋገጫ
+  if (!file) {
+    alert('⚠️ እባክዎ የክፍያ ደረሰኝ (screenshot) ያስገቡ!');
+    return;
+  }
+  if (!name || !phone || !address) {
+    alert('እባክዎ ሁሉንም መስኮች ይሙሉ!');
+    return;
+  }
+
+  // ===== የትዕዛዝ ዝርዝር አዘጋጅ =====
+  let orderDetails = '🛍️ አዋሽ ኦንላይን ገበያ - አዲስ ትዕዛዝ%0A';
+  orderDetails += `👤 ስም፦ ${name}%0A`;
+  orderDetails += `📞 ስልክ፦ ${phone}%0A`;
+  orderDetails += `📍 አድራሻ፦ ${address}%0A`;
+
+  // ቦታ ካለ ጨምር
+  if (lat && lng) {
+    const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+    orderDetails += `🗺️ ቦታ (Google Maps)፦ ${mapsLink}%0A`;
+  } else {
+    orderDetails += `🗺️ ቦታ፦ አልተመረጠም%0A`;
+  }
+
+  orderDetails += '%0A📦 የተገዙ እቃዎች፦%0A';
+
+  let total = 0;
+  cart.forEach(item => {
+    const subtotal = item.price * item.quantity;
+    total += subtotal;
+    orderDetails += `▪️ ${item.name}  x${item.quantity}  = ${subtotal.toLocaleString()} ብር%0A`;
+  });
+  orderDetails += `%0A💰 ጠቅላላ ክፍያ፦ ${total.toLocaleString()} ብር`;
+  orderDetails += `%0A%0A💳 ክፍያ ወደ፦ CBE 1000743235561 (Hassen Mehamed)`;
+  orderDetails += `%0A%0A📎 ደረሰኝ (screenshot) ከዚህ በታች ተያይዟል።`;
+
+  // ===== ፋይሉን አንብብ =====
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    console.log('📎 ደረሰኝ ተመርጧል፦', file.name, file.size);
+
+    // ቴሌግራም ካልተዋቀረ (ለሙከራ)
+    if (BOT_TOKEN === 'YOUR_BOT_TOKEN' || CHAT_ID === 'YOUR_CHAT_ID') {
+      alert(`✅ ትዕዛዝ ተዘጋጅቷል!\n\n${orderDetails.replace(/%0A/g, '\n')}\n\n⚠️ የቴሌግራም ቦት አልተዋቀረም። መልእክቱ አልተላከም።\nነገር ግን ደረሰኙ ተመርጧል።`);
+      cart = []; saveCart(); updateBadge(); closeCartModal();
+      checkoutFormModal.classList.remove('active');
+      return;
+    }
+
+    // ===== ወደ ቴሌግራም መላክ =====
+    // 1) መልእክቱን ላክ
+    const textUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${orderDetails}`;
+    fetch(textUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok) {
+          // 2) ፋይሉን (ደረሰኝ) ላክ
+          const formData = new FormData();
+          formData.append('chat_id', CHAT_ID);
+          formData.append('document', file, file.name);
+          formData.append('caption', '📎 የክፍያ ደረሰኝ (Screenshot)');
+
+          const fileUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`;
+          return fetch(fileUrl, { method: 'POST', body: formData });
+        } else {
+          throw new Error('መልእክት አልተላከም');
+        }
+      })
+      .then(res => res.json())
+      .then(fileData => {
+        if (fileData.ok) {
+          alert('🎉 ትዕዛዝ ከቦታ መረጃ እና ከደረሰኝ ጋር ወደ ቴሌግራም ተልኳል!');
+          cart = []; saveCart(); updateBadge(); closeCartModal();
+          checkoutFormModal.classList.remove('active');
+        } else {
+          alert('❌ ደረሰኙ አልተላከም ነገር ግን መልእክቱ ተልኳል።');
+        }
+      })
+      .catch(err => {
+        alert('❌ ስህተት፦ ' + err.message);
+      });
+  };
+  reader.readAsDataURL(file);
+});
+
+// ======================== መጀመሪያ ========================
+function init() {
+  renderCategories();
+  renderFeatured();
+  renderProducts('ሁሉም', '');
+  updateBadge();
+}
+init();
+
+console.log('🚀 Awash Online Gebeya ተጀምሯል! (ሙሉ የተስተካከለ ስሪት)');
+</script>
+</body>
+</html>
+
+
