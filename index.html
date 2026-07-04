@@ -6,7 +6,7 @@
   <title>Awash Online Gebeya</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
-    /* ===== ሁሉም ቅጦች እንደበፊቱ ===== */
+    /* ===== መሰረታዊ ቅጥ ===== */
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
     body { background:#f8fafc; padding:0 16px 40px; }
 
@@ -115,7 +115,7 @@
     }
     .featured-card .buy-now-btn:hover { background:#d97706; transform:scale(1.02); }
 
-    /* የምርት ፍርግርግ */
+    /* የምርት ፍርግርግ - DESCRIPTION ተጨምሯል */
     .products-grid {
       display:grid; grid-template-columns:repeat(auto-fill, minmax(170px,1fr));
       gap:18px; margin-top:10px;
@@ -129,6 +129,11 @@
     .product-card:hover { transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.08); }
     .product-card img { width:100%; height:140px; object-fit:cover; border-radius:14px; background:#e5e7eb; }
     .product-card h3 { font-size:15px; margin:10px 0 4px; color:#0f172a; font-weight:600; }
+    .product-card .description {
+      font-size:12px; color:#475569; margin:4px 0 6px;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+      overflow:hidden; line-height:1.4; height:2.8em;
+    }
     .product-card .price { font-size:18px; font-weight:700; color:#16a34a; margin:4px 0 10px; }
     .product-card .price small { font-size:12px; font-weight:400; color:#64748b; }
     .product-card .buy-btn {
@@ -195,6 +200,11 @@
       width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:40px;
       font-size:15px; outline:none; background:white;
     }
+    .form-content textarea {
+      width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:20px;
+      font-size:14px; outline:none; resize:vertical; min-height:60px;
+    }
+    .form-content textarea:focus { border-color:#0b2b4f; }
     .form-content .file-upload {
       width:100%; padding:10px 12px; border:2px dashed #cbd5e1; border-radius:40px;
       background:#f8fafc; cursor:pointer; margin:6px 0 8px;
@@ -241,7 +251,6 @@
       box-shadow:0 20px 60px rgba(0,0,0,0.3);
       border:8px solid #0b2b4f;
     }
-    /* ልክ እንደ ምስል የሚመስል ዲዛይን */
     .receipt-image {
       background: white;
       border-radius: 12px;
@@ -349,7 +358,11 @@
       padding:10px 14px; border:2px solid #e5e7eb; border-radius:30px; outline:none;
     }
     .admin-flex { display:flex; gap:8px; flex-wrap:wrap; }
-    .admin-flex input { flex:1; padding:10px 14px; border:2px solid #e5e7eb; border-radius:30px; outline:none; min-width:120px; }
+    .admin-flex input, .admin-flex textarea { 
+      flex:1; padding:10px 14px; border:2px solid #e5e7eb; border-radius:30px; 
+      outline:none; min-width:120px; 
+    }
+    .admin-flex textarea { border-radius:16px; min-height:60px; resize:vertical; }
     .mt-8 { margin-top:8px; }
     .mt-12 { margin-top:12px; }
     .text-center { text-align:center; }
@@ -363,6 +376,7 @@
       .admin-content { padding:16px; }
       .admin-grid-2 { grid-template-columns:1fr; }
       .receipt-content { padding:16px; }
+      .product-card .description { font-size:11px; -webkit-line-clamp:2; height:2.6em; }
     }
   </style>
 </head>
@@ -497,7 +511,7 @@
   </div>
 </div>
 
-<!-- ====== የአስተዳዳሪ ፓነል ====== -->
+<!-- ====== የአስተዳዳሪ ፓነል (DESCRIPTION ተጨምሯል) ====== -->
 <div class="admin-modal" id="adminModal">
   <div class="admin-content">
     <button class="admin-close" id="adminCloseBtn">&times;</button>
@@ -540,6 +554,7 @@
         <div id="categoryList" class="mt-8"></div>
       </div>
 
+      <!-- አዲስ እቃ መጨመር - DESCRIPTION ተጨምሯል -->
       <div class="admin-section">
         <h3>🛒 አዲስ እቃ ጨምር</h3>
         <div class="admin-grid-2">
@@ -547,6 +562,9 @@
           <input type="number" id="newProductPrice" placeholder="ዋጋ (ብር)..." />
           <select id="newProductCategory"></select>
           <input type="text" id="newProductImage" placeholder="የምስል URL..." />
+        </div>
+        <div class="admin-flex mt-8">
+          <textarea id="newProductDesc" placeholder="የእቃውን ጠቀሜታ ወይም መግለጫ ይጻፉ..." rows="2"></textarea>
         </div>
         <button class="admin-btn-submit mt-8" id="addProductBtn">➕ እቃ ጨምር</button>
         <div id="productList" class="mt-8" style="max-height:200px; overflow-y:auto;"></div>
@@ -565,6 +583,7 @@
         <div id="featuredList" class="mt-8"></div>
       </div>
 
+      <!-- እቃ ማስተካከል - DESCRIPTION ተጨምሯል -->
       <div class="admin-section">
         <h3>✏️ እቃ ማስተካከል</h3>
         <p class="text-sm">ከታች ያለውን እቃ ምረጥ እና አዲስ መረጃ አስገባ</p>
@@ -574,6 +593,9 @@
           <input type="number" id="editProductPrice" placeholder="አዲስ ዋጋ..." />
           <select id="editProductCategory"></select>
           <input type="text" id="editProductImage" placeholder="አዲስ የምስል URL..." />
+        </div>
+        <div class="admin-flex mt-8">
+          <textarea id="editProductDesc" placeholder="አዲስ መግለጫ..." rows="2"></textarea>
         </div>
         <button class="admin-btn-submit mt-8" id="editProductBtn">💾 አስተካክል</button>
         <p class="text-sm mt-8" id="editStatus"></p>
@@ -646,7 +668,7 @@ function saveFeatured(featured) {
     localStorage.setItem('awashFeatured', JSON.stringify(featured));
 }
 
-// ======================== መሰረታዊ መረጃ ========================
+// ======================== መሰረታዊ መረጃ (DESCRIPTION ተጨምሯል) ========================
 const DEFAULT_CATEGORIES = [
   "ሁሉም", "ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", "የውበት መጠበቂያ", "ኤሌክትሮኒክስ",
   "የቤት እቃ", "የግንባታ እቃዎች", "ሱፐር ማርኬት", "የሴት አልባሳት",
@@ -655,25 +677,25 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const DEFAULT_PRODUCTS = [
-  { id:1, name:"ስማርት ብርሃን መቆጣጠሪያ", price:1200, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/smart1/300/300" },
-  { id:2, name:"አውቶማቲክ እጥበት መሳሪያ", price:2500, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/auto1/300/300" },
-  { id:3, name:"የፊት መጠበቂያ ክሬም", price:450, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/cream1/300/300" },
-  { id:4, name:"ተፈጥሯዊ ዘይት", price:600, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/oil1/300/300" },
-  { id:5, name:"ስማርት ስልክ 128GB", price:18900, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/phoneX/300/300" },
-  { id:6, name:"የጆሮ ማዳመጫ ብሉቱዝ", price:3200, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/headX/300/300" },
-  { id:7, name:"ምቹ ሶፋ (3 ሰው)", price:8500, category:"የቤት እቃ", image:"https://picsum.photos/seed/sofa1/300/300" },
-  { id:8, name:"የእንጨት ጠረጴዛ", price:4200, category:"የቤት እቃ", image:"https://picsum.photos/seed/table1/300/300" },
-  { id:9, name:"ሲሚንቶ 50ኪግ", price:800, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/cement1/300/300" },
-  { id:10, name:"ብረት ማጠፊያ", price:1500, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/iron1/300/300" },
-  { id:11, name:"የበቆሎ ዱቄት 5ኪግ", price:300, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/flour1/300/300" },
-  { id:12, name:"የወተት ቅቤ 1ኪግ", price:450, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/butter1/300/300" },
-  { id:13, name:"የሴቶች ቀሚስ (ካታን)", price:1200, category:"የሴት አልባሳት", image:"https://picsum.photos/seed/dress1/300/300" },
-  { id:14, name:"የወንዶች ሸሚዝ", price:800, category:"የወንዶች አልባሳት", image:"https://picsum.photos/seed/shirt1/300/300" },
-  { id:15, name:"የልጅ ሱሪ (ቦይ)", price:500, category:"የህፃን ወንዶች አልባሳት", image:"https://picsum.photos/seed/kidboy1/300/300" },
-  { id:16, name:"የልጅ ቀሚስ (ገርል)", price:550, category:"የህፃን ሴቶች አልባሳት", image:"https://picsum.photos/seed/kidgirl1/300/300" },
-  { id:17, name:"የርቀት መቆጣጠሪያ መኪና", price:700, category:"የልጆች መጫወቻ", image:"https://picsum.photos/seed/toycar1/300/300" },
-  { id:18, name:"ማስታወሻ ደብተር (A4)", price:150, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/notebook1/300/300" },
-  { id:19, name:"ባለቀለም እርሳስ ስብስብ", price:280, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/pencil1/300/300" }
+  { id:1, name:"ስማርት ብርሃን መቆጣጠሪያ", price:1200, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/smart1/300/300", description:"በርቀት መቆጣጠር የሚቻል ዘመናዊ መብራት፣ ኢነርጂ ይቆጥባል" },
+  { id:2, name:"አውቶማቲክ እጥበት መሳሪያ", price:2500, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/auto1/300/300", description:"እጥበትን በራስ-ሰር የሚቆጣጠር፣ ጊዜን ይቆጥባል" },
+  { id:3, name:"የፊት መጠበቂያ ክሬም", price:450, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/cream1/300/300", description:"ተፈጥሯዊ ንጥረ ነገሮችን ይዟል፣ ፊትን ያነጻል" },
+  { id:4, name:"ተፈጥሯዊ ዘይት", price:600, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/oil1/300/300", description:"ከተፈጥሮ የተውጣጣ ዘይት፣ ቆዳን ያለሰለስ" },
+  { id:5, name:"ስማርት ስልክ 128GB", price:18900, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/phoneX/300/300", description:"ከፍተኛ ፍጥነት ያለው ስልክ፣ ጥሩ ካሜራ እና ረጅም ባትሪ" },
+  { id:6, name:"የጆሮ ማዳመጫ ብሉቱዝ", price:3200, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/headX/300/300", description:"ከፍተኛ ጥራት ያለው ድምጽ፣ ረጅም የባትሪ ህይወት" },
+  { id:7, name:"ምቹ ሶፋ (3 ሰው)", price:8500, category:"የቤት እቃ", image:"https://picsum.photos/seed/sofa1/300/300", description:"ለስላሳ እና ምቹ ሶፋ፣ ዘመናዊ ዲዛይን" },
+  { id:8, name:"የእንጨት ጠረጴዛ", price:4200, category:"የቤት እቃ", image:"https://picsum.photos/seed/table1/300/300", description:"ከጥራት እንጨት የተሰራ፣ ለረጅም ጊዜ የሚቆይ" },
+  { id:9, name:"ሲሚንቶ 50ኪግ", price:800, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/cement1/300/300", description:"ከፍተኛ ጥራት ያለው ሲሚንቶ፣ ለግንባታ ተስማሚ" },
+  { id:10, name:"ብረት ማጠፊያ", price:1500, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/iron1/300/300", description:"ጠንካራ እና ዘላቂ የብረት ማጠፊያ" },
+  { id:11, name:"የበቆሎ ዱቄት 5ኪግ", price:300, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/flour1/300/300", description:"ንጹህ እና ጥራት ያለው የበቆሎ ዱቄት" },
+  { id:12, name:"የወተት ቅቤ 1ኪግ", price:450, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/butter1/300/300", description:"ከፍተኛ ጥራት ያለው የወተት ቅቤ፣ ለምግብነት ተስማሚ" },
+  { id:13, name:"የሴቶች ቀሚስ (ካታን)", price:1200, category:"የሴት አልባሳት", image:"https://picsum.photos/seed/dress1/300/300", description:"ዘመናዊ እና ምቹ የሴቶች ቀሚስ" },
+  { id:14, name:"የወንዶች ሸሚዝ", price:800, category:"የወንዶች አልባሳት", image:"https://picsum.photos/seed/shirt1/300/300", description:"ከፍተኛ ጥራት ያለው ሸሚዝ፣ ለቀን እና ለልዩ ዝግጅት" },
+  { id:15, name:"የልጅ ሱሪ (ቦይ)", price:500, category:"የህፃን ወንዶች አልባሳት", image:"https://picsum.photos/seed/kidboy1/300/300", description:"ለልጆች ምቹ እና ጠንካራ ሱሪ" },
+  { id:16, name:"የልጅ ቀሚስ (ገርል)", price:550, category:"የህፃን ሴቶች አልባሳት", image:"https://picsum.photos/seed/kidgirl1/300/300", description:"ቆንጆ እና ለስላሳ የልጅ ቀሚስ" },
+  { id:17, name:"የርቀት መቆጣጠሪያ መኪና", price:700, category:"የልጆች መጫወቻ", image:"https://picsum.photos/seed/toycar1/300/300", description:"በርቀት የሚቆጣጠር መኪና፣ ለልጆች አስደሳች" },
+  { id:18, name:"ማስታወሻ ደብተር (A4)", price:150, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/notebook1/300/300", description:"ጥራት ያለው የማስታወሻ ደብተር፣ ለትምህርት ተስማሚ" },
+  { id:19, name:"ባለቀለም እርሳስ ስብስብ", price:280, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/pencil1/300/300", description:"12 ባለቀለም እርሳሶች፣ ለስዕል እና ለጽሁፍ" }
 ];
 
 // ======================== የLocalStorage አስተዳደር ========================
@@ -753,6 +775,7 @@ const newProductName = document.getElementById('newProductName');
 const newProductPrice = document.getElementById('newProductPrice');
 const newProductCategory = document.getElementById('newProductCategory');
 const newProductImage = document.getElementById('newProductImage');
+const newProductDesc = document.getElementById('newProductDesc');
 const addProductBtn = document.getElementById('addProductBtn');
 const productList = document.getElementById('productList');
 const newAdminPass = document.getElementById('newAdminPass');
@@ -772,6 +795,7 @@ const editProductName = document.getElementById('editProductName');
 const editProductPrice = document.getElementById('editProductPrice');
 const editProductCategory = document.getElementById('editProductCategory');
 const editProductImage = document.getElementById('editProductImage');
+const editProductDesc = document.getElementById('editProductDesc');
 const editProductBtn = document.getElementById('editProductBtn');
 const editStatus = document.getElementById('editStatus');
 
@@ -830,6 +854,7 @@ function loadEditProduct(product) {
   editProductPrice.value = product.price;
   editProductCategory.value = product.category;
   editProductImage.value = product.image || '';
+  editProductDesc.value = product.description || '';
 }
 
 function renderCategoryList() {
@@ -905,7 +930,7 @@ function addFeaturedToCart(name, price) {
   const product = products.find(p => p.name === name && p.price === price);
   if (product) { addToCart(product); }
   else {
-    const newProduct = { id: Date.now(), name, price, category: 'ወቅታዊ', image: 'https://picsum.photos/seed/' + Date.now() + '/300/300' };
+    const newProduct = { id: Date.now(), name, price, category: 'ወቅታዊ', image: 'https://picsum.photos/seed/' + Date.now() + '/300/300', description: '' };
     addToCart(newProduct);
   }
 }
@@ -915,7 +940,7 @@ function renderProducts(category = currentCategory, searchTerm = '') {
   if (category !== 'ሁሉም') filtered = filtered.filter(p => p.category === category);
   if (searchTerm.trim()) {
     const term = searchTerm.trim().toLowerCase();
-    filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term));
+    filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || (p.description && p.description.toLowerCase().includes(term)));
   }
   productGrid.innerHTML = '';
   if (filtered.length === 0) {
@@ -928,6 +953,7 @@ function renderProducts(category = currentCategory, searchTerm = '') {
     card.innerHTML = `
       <img src="${p.image}" alt="${p.name}" loading="lazy" />
       <h3>${p.name}</h3>
+      <div class="description">${p.description || 'ጠቃሚ እቃ'}</div>
       <div class="price">${p.price.toLocaleString()} <small>ብር</small></div>
       <button class="buy-btn" onclick="addToCartById(${p.id})"><i class="fas fa-shopping-bag"></i> ይግዙ</button>
     `;
@@ -998,13 +1024,14 @@ function addProduct() {
   const price = parseFloat(newProductPrice.value);
   const category = newProductCategory.value;
   const image = newProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
+  const description = newProductDesc.value.trim() || 'ጠቃሚ እቃ';
   if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
   if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
   const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-  const newProduct = { id: newId, name, price, category, image };
+  const newProduct = { id: newId, name, price, category, image, description };
   products.push(newProduct);
   saveProducts(products);
-  newProductName.value = ''; newProductPrice.value = ''; newProductImage.value = '';
+  newProductName.value = ''; newProductPrice.value = ''; newProductImage.value = ''; newProductDesc.value = '';
   renderProductList();
   renderProducts(currentCategory, searchInput.value);
   populateCategorySelects();
@@ -1019,12 +1046,14 @@ function editProduct() {
   const price = parseFloat(editProductPrice.value);
   const category = editProductCategory.value;
   const image = editProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
+  const description = editProductDesc.value.trim() || 'ጠቃሚ እቃ';
   if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
   if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
   product.name = name;
   product.price = price;
   product.category = category;
   product.image = image;
+  product.description = description;
   saveProducts(products);
   renderProductList();
   renderProducts(currentCategory, searchInput.value);
@@ -1230,7 +1259,7 @@ checkoutBtn.addEventListener('click', function() {
 
 cancelFormBtn.addEventListener('click', function() { checkoutFormModal.classList.remove('active'); });
 
-// ======================== ቼክአውት መላክ (ከምስል-አይነት ደረሰኝ ጋር) ========================
+// ======================== ቼክአውት መላክ ========================
 checkoutForm.addEventListener('submit', function(e) {
   e.preventDefault();
   const name = custName.value.trim();
@@ -1243,7 +1272,6 @@ checkoutForm.addEventListener('submit', function(e) {
   if (!file) { alert('⚠️ የክፍያ ደረሰኝ (screenshot) ያስገቡ!'); return; }
   if (!name || !phone || !address) { alert('ሁሉንም መስኮች ይሙሉ!'); return; }
 
-  // የትዕዛዝ ዝርዝር አዘጋጅ
   let orderDetails = '🛍️ አዋሽ ኦንላይን ገበያ - አዲስ ትዕዛዝ%0A';
   orderDetails += `👤 ስም፦ ${name}%0A📞 ስልክ፦ ${phone}%0A📍 አድራሻ፦ ${address}%0A`;
   if (lat && lng) { orderDetails += `🗺️ ቦታ፦ https://www.google.com/maps?q=${lat},${lng}%0A`; }
@@ -1260,10 +1288,8 @@ checkoutForm.addEventListener('submit', function(e) {
   orderDetails += `%0A%0A💳 ክፍያ ወደ፦ CBE ${bankData.account} (${bankData.name})`;
   orderDetails += `%0A%0A📎 ደረሰኝ (screenshot) ከዚህ በታች ተያይዟል።`;
 
-  // ወደ ቴሌግራም መላክ
   const sendToTelegram = function() {
     if (BOT_TOKEN === 'YOUR_BOT_TOKEN' || CHAT_ID === 'YOUR_CHAT_ID') {
-      // ቴሌግራም ካልተዋቀረ ወዲያው ደረሰኝ አሳይ
       showReceipt(name, phone, address, itemsList, total);
       return Promise.resolve();
     }
@@ -1295,7 +1321,6 @@ checkoutForm.addEventListener('submit', function(e) {
     });
   };
 
-  // ደረሰኝ ማሳየት (እንደ ምስል)
   const showReceipt = function(name, phone, address, items, total) {
     const now = new Date();
     const dateStr = now.toLocaleDateString('am-ET', { 
@@ -1341,13 +1366,10 @@ checkoutForm.addEventListener('submit', function(e) {
     receiptModal.classList.add('active');
   };
 
-  // ሂደቱን ጀምር
   sendToTelegram()
     .then(() => {
-      // ጋሪ አጽዳ
       cart = []; saveCart(); updateBadge(); closeCartModal();
       checkoutFormModal.classList.remove('active');
-      // ደረሰኝ አሳይ
       showReceipt(name, phone, address, itemsList, total);
     })
     .catch(err => {
@@ -1374,7 +1396,9 @@ function init() {
   bankNameDisplay.textContent = 'ስም፡ ' + bankData.name;
 }
 init();
-console.log('🚀 Awash Online Gebeya ተጀምሯል! (ደረሰኝ እንደ ምስል)');
+console.log('🚀 Awash Online Gebeya ተጀምሯል! (DESCRIPTION ተጨምሯል)');
 </script>
 </body>
 </html>
+
+
