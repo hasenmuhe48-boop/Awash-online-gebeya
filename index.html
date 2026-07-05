@@ -1469,8 +1469,8 @@
         // ============================================================
         // ቴሌግራም
         // ============================================================
-        const BOT_TOKEN = 'YOUR_BOT_TOKEN';
-        const CHAT_ID = 'YOUR_CHAT_ID';
+        const BOT_TOKEN = '8892108715:AAFEIeFxGEsw-I0m7QSkYOP3-ZNaDZ4yBqk';
+        const CHAT_ID = '6331737160';
 
         // ============================================================
         // ሚስጥራዊ ቁልፍ እና ፓስዎርድ
@@ -1828,15 +1828,22 @@
         // ============================================================
 
         function checkAdminVisibility() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const adminParam = urlParams.get('admin');
-            const adminBtn = document.getElementById('adminOpenBtn');
-            if (adminParam === ADMIN_SHOW_KEY) {
-                adminBtn.classList.add('visible');
-            } else {
-                adminBtn.classList.remove('visible');
-            }
-        }
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin');
+    const adminBtn = document.getElementById('adminOpenBtn');
+    
+    // ለሙከራ በConsole ላይ አሳይ
+    console.log('🔍 ሚስጥራዊ ቃል:', adminParam);
+    console.log('🔑 የሚፈለገው:', ADMIN_SHOW_KEY);
+    
+    if (adminParam === ADMIN_SHOW_KEY) {
+        adminBtn.classList.add('visible');
+        console.log('✅ ማርሽ ታይቷል!');
+    } else {
+        adminBtn.classList.remove('visible');
+        console.log('❌ ማርሽ ተደብቋል');
+    }
+}
 
         function renderCategories() {
             sidebarCategoryList.innerHTML = '';
