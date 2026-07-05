@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Awash Online Gebeya</title>
+  <title>Awash Online Gebeya - Appwrite</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-<meta name="google-site-verification" content="Y9z_7EfIntj_Jin8b4t1JtxnedgjCS3zrO5fPIns0DM" />  
+  
+  <!-- ===== Appwrite SDK ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0/dist/sdk.min.js"></script>
+  
   <style>
     /* ===== መሰረታዊ ቅጥ (እንደበፊቱ) ===== */
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
@@ -154,7 +157,7 @@
       margin:28px 0 12px; border-left:5px solid #f59e0b; padding-left:14px;
     }
 
-    /* ===== የምርት ዝርዝር መስኮት ===== */
+    /* የምርት ዝርዝር መስኮት */
     .product-detail-modal {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
@@ -165,7 +168,7 @@
     .product-detail-content {
       background:white; max-width:500px; width:100%; max-height:90vh;
       border-radius:28px; overflow-y:auto; position:relative;
-      animation: fadeIn 0.3s ease;
+      animation:fadeIn 0.3s ease;
     }
     @keyframes fadeIn {
       from { opacity:0; transform:scale(0.95); }
@@ -184,15 +187,9 @@
       width:100%; height:300px; object-fit:cover; border-radius:28px 28px 0 0;
       background:#e5e7eb;
     }
-    .product-detail-content .detail-body {
-      padding:20px 24px 28px;
-    }
-    .product-detail-content .detail-body h2 {
-      font-size:22px; color:#0b2b4f; margin-bottom:6px;
-    }
-    .product-detail-content .detail-body .detail-category {
-      font-size:13px; color:#64748b; margin-bottom:10px;
-    }
+    .product-detail-content .detail-body { padding:20px 24px 28px; }
+    .product-detail-content .detail-body h2 { font-size:22px; color:#0b2b4f; margin-bottom:6px; }
+    .product-detail-content .detail-body .detail-category { font-size:13px; color:#64748b; margin-bottom:10px; }
     .product-detail-content .detail-body .detail-desc {
       font-size:15px; color:#1e293b; line-height:1.8;
       margin:12px 0 16px; padding:12px 16px;
@@ -240,7 +237,7 @@
     .cart-actions .checkout-btn:hover { background:#1e3a5f; }
     .empty-cart { text-align:center; padding:30px 0; color:#64748b; }
 
-    /* የደንበኛ ፎርም (አካውንት መምረጫ ተጨምሯል) */
+    /* የደንበኛ ፎርም */
     .form-modal {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
@@ -253,11 +250,9 @@
     }
     .form-content h2 { margin-bottom:16px; color:#0b2b4f; }
     .form-content label { display:block; margin:12px 0 4px; font-weight:600; color:#1e293b; }
-    .form-content input[type="text"], 
-    .form-content input[type="tel"],
-    .form-content input[type="number"] { 
-      width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:40px; 
-      font-size:15px; outline:none; 
+    .form-content input[type="text"], .form-content input[type="tel"], .form-content input[type="number"] {
+      width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:40px;
+      font-size:15px; outline:none;
     }
     .form-content input:focus { border-color:#0b2b4f; }
     .form-content select {
@@ -275,16 +270,15 @@
     }
     .form-content .file-upload input[type="file"] { width:100%; border:none; outline:none; background:transparent; }
     .location-btn {
-      width:100%; padding:12px; border-radius:40px; background:#0b2b4f; 
-      color:white; border:none; font-weight:600; cursor:pointer; 
+      width:100%; padding:12px; border-radius:40px; background:#0b2b4f;
+      color:white; border:none; font-weight:600; cursor:pointer;
       transition:0.2s; font-size:15px; margin:4px 0 8px;
     }
     .location-btn:hover { background:#1e3a5f; }
     .location-status { font-size:13px; color:#475569; margin-top:4px; padding:8px 12px; background:#f1f5f9; border-radius:20px; text-align:center; }
     .location-status.success { background:#dcfce7; color:#166534; }
     .location-status.error { background:#fee2e2; color:#991b1b; }
-    
-    /* የክፍያ አካውንት ማሳያ */
+
     .form-content .payment-info {
       background:#f0fdf4; border:2px solid #bbf7d0; border-radius:16px;
       padding:14px; margin:14px 0 12px; text-align:center;
@@ -315,15 +309,11 @@
     .receipt-content {
       background:white; max-width:500px; width:94%; max-height:90vh;
       padding:28px 24px; border-radius:28px; overflow-y:auto;
-      position:relative;
-      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+      position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.3);
       border:8px solid #0b2b4f;
     }
     .receipt-image {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      border: 2px dashed #e5e7eb;
+      background:white; border-radius:12px; padding:20px; border:2px dashed #e5e7eb;
     }
     .receipt-header {
       text-align:center; border-bottom:2px solid #0b2b4f; padding-bottom:12px; margin-bottom:14px;
@@ -337,8 +327,7 @@
     .receipt-row .label { font-weight:600; color:#475569; }
     .receipt-row .value { font-weight:500; color:#0b2b4f; }
     .receipt-items {
-      background:#f8fafc; border-radius:12px; padding:10px 14px;
-      margin:10px 0;
+      background:#f8fafc; border-radius:12px; padding:10px 14px; margin:10px 0;
     }
     .receipt-items .item {
       display:flex; justify-content:space-between; font-size:14px;
@@ -371,7 +360,7 @@
       font-size:12px; font-weight:700; display:inline-block;
     }
 
-    /* የአስተዳዳሪ ፓነል (አካውንት መጨመሪያ ተጨምሯል) */
+    /* የአስተዳዳሪ ፓነል */
     .admin-modal {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
@@ -426,16 +415,20 @@
       padding:10px 14px; border:2px solid #e5e7eb; border-radius:30px; outline:none;
     }
     .admin-flex { display:flex; gap:8px; flex-wrap:wrap; }
-    .admin-flex input, .admin-flex textarea { 
-      flex:1; padding:10px 14px; border:2px solid #e5e7eb; border-radius:30px; 
-      outline:none; min-width:120px; 
+    .admin-flex input, .admin-flex textarea {
+      flex:1; padding:10px 14px; border:2px solid #e5e7eb; border-radius:30px;
+      outline:none; min-width:120px;
     }
     .admin-flex textarea { border-radius:16px; min-height:60px; resize:vertical; }
     .mt-8 { margin-top:8px; }
-    .mt-12 { margin-top:12px; }
     .text-center { text-align:center; }
     .text-sm { font-size:12px; color:#64748b; }
     .text-success { color:#16a34a; font-weight:600; }
+
+    .loading-spinner {
+      text-align:center; padding:40px; color:#64748b;
+    }
+    .loading-spinner i { font-size:40px; display:block; margin-bottom:10px; }
 
     @media (max-width:640px) {
       .header-title { font-size:16px; }
@@ -447,7 +440,6 @@
       .receipt-content { padding:16px; }
       .product-detail-content .detail-img { height:220px; }
       .product-detail-content .detail-body { padding:16px; }
-      .product-detail-content .detail-body .detail-price { font-size:22px; }
     }
   </style>
 </head>
@@ -506,7 +498,12 @@
 
 <!-- ====== ዋና ምርቶች ====== -->
 <h2 class="section-title" id="activeCategoryTitle">ሁሉም እቃዎች</h2>
-<div class="products-grid" id="productGrid"></div>
+<div id="productGrid" class="products-grid">
+  <div class="loading-spinner">
+    <i class="fas fa-spinner fa-pulse"></i>
+    እቃዎች እየተጫኑ ነው...
+  </div>
+</div>
 
 <!-- ====== የምርት ዝርዝር መስኮት ====== -->
 <div class="product-detail-modal" id="productDetailModal">
@@ -538,7 +535,7 @@
   </div>
 </div>
 
-<!-- ====== የደንበኛ ፎርም (አካውንት መምረጫ ተጨምሯል) ====== -->
+<!-- ====== የደንበኛ ፎርም ====== -->
 <div class="form-modal" id="checkoutFormModal">
   <div class="form-content">
     <h2>📋 የደንበኛ መረጃ ይሙሉ</h2>
@@ -561,7 +558,6 @@
         <input type="file" id="receiptFile" accept="image/*" />
       </div>
       
-      <!-- ===== የክፍያ አካውንት መምረጫ ===== -->
       <label>🏦 ለክፍያ የሚፈልጉትን አካውንት ይምረጡ</label>
       <select id="paymentAccountSelect" required style="width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:40px; font-size:15px; outline:none; background:white;">
         <option value="">-- አካውንት ይምረጡ --</option>
@@ -569,9 +565,9 @@
       
       <div class="payment-info" id="paymentInfoDisplay">
         <p>💳 ክፍያ ወደዚህ አካውንት ያስገቡ፦</p>
-        <div class="account" id="bankAccountDisplay">CBE: 1000743235561</div>
-        <div class="account-name" id="bankNameDisplay">ስም፡ Hassen Mehamed</div>
-        <div class="bank-label" id="bankLabelDisplay">ባንክ፡ CBE</div>
+        <div class="account" id="bankAccountDisplay">-</div>
+        <div class="account-name" id="bankNameDisplay">-</div>
+        <div class="bank-label" id="bankLabelDisplay">-</div>
       </div>
       
       <div class="extra-info">
@@ -600,15 +596,13 @@
         <span class="receipt-badge">✅ የተረጋገጠ</span>
       </div>
       <div id="receiptContent"></div>
-      <div class="receipt-footer">
-        እናመሰግናለን! እንደገና ይጠብቁን 🙏
-      </div>
+      <div class="receipt-footer">እናመሰግናለን! እንደገና ይጠብቁን 🙏</div>
     </div>
     <button class="receipt-close-btn" id="receiptCloseBtn">✅ አረጋገጥኩ</button>
   </div>
 </div>
 
-<!-- ====== የአስተዳዳሪ ፓነል (አካውንት መጨመሪያ ተጨምሯል) ====== -->
+<!-- ====== የአስተዳዳሪ ፓነል ====== -->
 <div class="admin-modal" id="adminModal">
   <div class="admin-content">
     <button class="admin-close" id="adminCloseBtn">&times;</button>
@@ -623,8 +617,7 @@
     </div>
 
     <div id="adminContent" style="display:none;">
-
-      <!-- 1. ፓስዎርድ መቀየር -->
+      <!-- ፓስዎርድ መቀየር -->
       <div class="admin-section">
         <h3>🔑 ፓስዎርድ ቀይር</h3>
         <div class="admin-flex">
@@ -633,21 +626,21 @@
         </div>
       </div>
 
-      <!-- 2. የክፍያ አካውንቶች መቀየር/መጨመር (አዲስ) -->
+      <!-- የክፍያ አካውንቶች -->
       <div class="admin-section" style="border:2px solid #0b2b4f; background:#e8f0fe;">
         <h3>🏦 የክፍያ አካውንቶች መቀየር/መጨመር</h3>
         <p class="text-sm">ከCBE በተጨማሪ ሌሎች የባንክ አካውንቶችን ይጨምሩ</p>
         <div class="admin-flex mt-8">
-          <input type="text" id="newBankName" placeholder="የባንክ ስም (ለምሳሌ: CBE, Awash, Dashen...)..." style="flex:1.5;" />
+          <input type="text" id="newBankName" placeholder="የባንክ ስም..." style="flex:1.5;" />
           <input type="text" id="newBankAccount" placeholder="የአካውንት ቁጥር..." style="flex:1.5;" />
-          <input type="text" id="newBankHolder" placeholder="የባንክ ባለቤት ስም..." style="flex:1.5;" />
+          <input type="text" id="newBankHolder" placeholder="የባለቤት ስም..." style="flex:1.5;" />
         </div>
         <button class="admin-btn-submit mt-8" id="addBankAccountBtn">➕ አካውንት ጨምር</button>
         <div id="bankAccountList" class="mt-8"></div>
         <p class="text-sm mt-8" id="bankAccountStatus"></p>
       </div>
 
-      <!-- 3. አዲስ ካታጎሪ መጨመር -->
+      <!-- ካታጎሪ -->
       <div class="admin-section">
         <h3>📂 አዲስ ካታጎሪ ጨምር</h3>
         <div class="admin-flex">
@@ -657,7 +650,7 @@
         <div id="categoryList" class="mt-8"></div>
       </div>
 
-      <!-- 4. አዲስ እቃ መጨመር -->
+      <!-- አዲስ እቃ -->
       <div class="admin-section">
         <h3>🛒 አዲስ እቃ ጨምር</h3>
         <div class="admin-grid-2">
@@ -667,16 +660,15 @@
           <input type="text" id="newProductImage" placeholder="የምስል URL..." />
         </div>
         <div class="admin-flex mt-8">
-          <textarea id="newProductDesc" placeholder="የእቃውን ጠቀሜታ ወይም መግለጫ ይጻፉ..." rows="2"></textarea>
+          <textarea id="newProductDesc" placeholder="የእቃውን ጠቀሜታ..." rows="2"></textarea>
         </div>
         <button class="admin-btn-submit mt-8" id="addProductBtn">➕ እቃ ጨምር</button>
         <div id="productList" class="mt-8" style="max-height:200px; overflow-y:auto;"></div>
       </div>
 
-      <!-- 5. ወቅታዊ እቃዎች መቀየር -->
+      <!-- ወቅታዊ እቃዎች -->
       <div class="admin-section">
         <h3>⚡ ወቅታዊ እቃዎች መቀየር</h3>
-        <p class="text-sm">ወቅታዊ እቃዎችን ከዚህ ይጨምሩ/ያስወግዱ</p>
         <div class="admin-flex mt-8">
           <input type="text" id="featuredName" placeholder="የእቃ ስም..." />
           <input type="number" id="featuredPrice" placeholder="ዋጋ..." />
@@ -687,26 +679,21 @@
         <div id="featuredList" class="mt-8"></div>
       </div>
 
-      <!-- 6. እቃ ማስተካከል -->
+      <!-- እቃ ማስተካከል -->
       <div class="admin-section" style="border:2px solid #0b2b4f; background:#e8f0fe;">
         <h3>✏️ እቃ ማስተካከል</h3>
-        <p class="text-sm">ከታች ያለውን እቃ ምረጥ እና አዲስ መረጃ አስገባ</p>
-        
         <div class="admin-grid-2 mt-8">
           <select id="editProductSelect" style="grid-column:1/3;"></select>
         </div>
-        
         <div class="admin-grid-2 mt-8">
           <input type="text" id="editProductName" placeholder="አዲስ ስም..." />
           <input type="number" id="editProductPrice" placeholder="አዲስ ዋጋ..." />
           <select id="editProductCategory"></select>
           <input type="text" id="editProductImage" placeholder="አዲስ የምስል URL..." />
         </div>
-        
         <div class="admin-flex mt-8">
           <textarea id="editProductDesc" placeholder="አዲስ መግለጫ..." rows="2"></textarea>
         </div>
-        
         <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
           <button class="admin-btn-submit" id="editProductBtn">💾 አስተካክል</button>
           <button class="admin-btn-warning" id="editClearBtn" style="background:#e5e7eb; color:#1e293b;">🔄 አጽዳ</button>
@@ -715,21 +702,49 @@
       </div>
 
       <div class="text-center text-sm" style="border-top:1px solid #e5e7eb; padding-top:12px;">
-        💡 መረጃዎች በብራውዘርዎ ውስጥ ይቀመጣሉ (LocalStorage)
+        💡 ውሂብ በAppwrite ዳታቤዝ ውስጥ ይቀመጣል
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ======================== የቴሌግራም ቦት መረጃ ========================
-const BOT_TOKEN = '8892108715:AAFEIeFxGEsw-I0m7QSkYOP3-ZNaDZ4yBqk';
-const CHAT_ID = '6331737160';
+// ============================================================
+// 🔥 APPRWRITE ማዋቀር - የራስዎን መረጃ ያስገቡ!
+// ============================================================
+const APPRWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1'; // ወይም የራስዎ አገልጋይ
+const APPRWRITE_PROJECT_ID = 'awash-online-gebeya';             // ከAppwrite Console ያግኙ
+const APPRWRITE_DATABASE_ID = '6a4a0502003426d7fbb0';           // የዳታቤዝ መለያ
+const APPRWRITE_API_KEY = 'standard_afd25bb7829adc4e6024a79b0b8b7115ba0766747be0e6cf9793368db7e5081029ee17023d8a755d3c7b71917d7bb590a20699946b215a1b4d45f1759ea196f748ec8653c4d3b341a608e3887e276bb2b7a0b1776855395b8a2a74c9c48dedb8092b80883352511c685fa5b51631056f1b5eee95685cead2158a4d20adf9748b';                   // ከAPI Keys ክፍል
 
-// ======================== ሚስጥራዊ ቁልፍ ========================
+// ኮሌክሽን IDs (ከAppwrite Console ያግኙ)
+const COLLECTION_PRODUCTS = 'products';
+const COLLECTION_CATEGORIES = 'categories';
+const COLLECTION_ORDERS = 'orders';
+const COLLECTION_BANK_ACCOUNTS = 'bank_accounts';
+
+// ============================================================
+// Appwrite ክላይንት ማስጀመር
+// ============================================================
+const client = new Appwrite.Client();
+client
+    .setEndpoint(APPRWRITE_ENDPOINT)
+    .setProject(APPRWRITE_PROJECT_ID)
+    .setKey(APPRWRITE_API_KEY);
+
+const databases = new Appwrite.Databases(client);
+
+// ============================================================
+// የቴሌግራም ቦት መረጃ (አማራጭ)
+// ============================================================
+const BOT_TOKEN = 'YOUR_BOT_TOKEN';
+const CHAT_ID = 'YOUR_CHAT_ID';
+
+// ============================================================
+// ሚስጥራዊ ቁልፍ እና ፓስዎርድ
+// ============================================================
 const ADMIN_SHOW_KEY = 'mysecret123';
 
-// ======================== የአስተዳዳሪ ፓስዎርድ ========================
 function getAdminPassword() {
     const stored = localStorage.getItem('awashAdminPassword');
     if (stored) return stored;
@@ -745,158 +760,209 @@ function changeAdminPassword(newPass) {
     return true;
 }
 
-// ======================== የባንክ አካውንቶች አስተዳደር ========================
-function getBankAccounts() {
-    const stored = localStorage.getItem('awashBankAccounts');
-    if (stored) {
-        try { return JSON.parse(stored); }
-        catch { return getDefaultBankAccounts(); }
-    }
-    return getDefaultBankAccounts();
-}
-
-function getDefaultBankAccounts() {
-    const def = [
-        { id: 1, bank: 'CBE', account: '1000743235561', holder: 'Hassen Mehamed' }
-    ];
-    localStorage.setItem('awashBankAccounts', JSON.stringify(def));
-    return def;
-}
-
-function saveBankAccounts(accounts) {
-    localStorage.setItem('awashBankAccounts', JSON.stringify(accounts));
-}
-
-function addBankAccount(bank, account, holder) {
-    const accounts = getBankAccounts();
-    const newId = accounts.length > 0 ? Math.max(...accounts.map(a => a.id)) + 1 : 1;
-    accounts.push({ id: newId, bank: bank.trim(), account: account.trim(), holder: holder.trim() });
-    saveBankAccounts(accounts);
-    return accounts;
-}
-
-function deleteBankAccount(id) {
-    let accounts = getBankAccounts();
-    accounts = accounts.filter(a => a.id !== id);
-    saveBankAccounts(accounts);
-    return accounts;
-}
-
-// ======================== የባንክ አካውንት ማሳያ በቼክአውት ========================
-function populatePaymentAccounts() {
-    const select = document.getElementById('paymentAccountSelect');
-    const accounts = getBankAccounts();
-    select.innerHTML = '<option value="">-- አካውንት ይምረጡ --</option>';
-    accounts.forEach(acc => {
-        const opt = document.createElement('option');
-        opt.value = acc.id;
-        opt.textContent = acc.bank + ' - ' + acc.account + ' (' + acc.holder + ')';
-        select.appendChild(opt);
-    });
-    // የመጀመሪያውን አካውንት አሳይ
-    if (accounts.length > 0) {
-        updatePaymentDisplay(accounts[0]);
-        select.value = accounts[0].id;
+// ============================================================
+// የባንክ አካውንቶች (ከAppwrite)
+// ============================================================
+async function getBankAccounts() {
+    try {
+        const response = await databases.listDocuments(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_BANK_ACCOUNTS
+        );
+        return response.documents.map(doc => ({
+            id: doc.$id,
+            bank: doc.bank,
+            account: doc.account,
+            holder: doc.holder
+        }));
+    } catch (error) {
+        console.error('አካውንቶችን ማግኘት አልተቻለም:', error);
+        return [];
     }
 }
 
-function updatePaymentDisplay(account) {
-    document.getElementById('bankAccountDisplay').textContent = account.bank + ': ' + account.account;
-    document.getElementById('bankNameDisplay').textContent = 'ስም፡ ' + account.holder;
-    document.getElementById('bankLabelDisplay').textContent = 'ባንክ፡ ' + account.bank;
+async function addBankAccount(bank, account, holder) {
+    try {
+        const response = await databases.createDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_BANK_ACCOUNTS,
+            'unique()',
+            { bank, account, holder }
+        );
+        return response;
+    } catch (error) {
+        console.error('አካውንት መጨመር አልተቻለም:', error);
+        throw error;
+    }
 }
 
-// አካውንት ሲመረጥ ማሳያ ያዘምኑ
-document.addEventListener('DOMContentLoaded', function() {
-    const select = document.getElementById('paymentAccountSelect');
-    if (select) {
-        select.addEventListener('change', function() {
-            const accounts = getBankAccounts();
-            const id = parseInt(this.value);
-            const account = accounts.find(a => a.id === id);
-            if (account) {
-                updatePaymentDisplay(account);
+async function deleteBankAccount(docId) {
+    try {
+        await databases.deleteDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_BANK_ACCOUNTS,
+            docId
+        );
+        return true;
+    } catch (error) {
+        console.error('አካውንት መሰረዝ አልተቻለም:', error);
+        throw error;
+    }
+}
+
+// ============================================================
+// ምርቶች (ከAppwrite)
+// ============================================================
+async function loadProductsFromAppwrite() {
+    try {
+        const response = await databases.listDocuments(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_PRODUCTS
+        );
+        return response.documents.map(doc => ({
+            id: parseInt(doc.$id) || doc.$id,
+            name: doc.name,
+            price: doc.price,
+            category: doc.category,
+            image: doc.image || 'https://picsum.photos/seed/' + doc.$id + '/300/300',
+            description: doc.description || 'ጠቃሚ እቃ'
+        }));
+    } catch (error) {
+        console.error('ምርቶችን ማግኘት አልተቻለም:', error);
+        return [];
+    }
+}
+
+async function addProductToAppwrite(name, price, category, image, description) {
+    try {
+        const response = await databases.createDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_PRODUCTS,
+            'unique()',
+            { name, price, category, image, description }
+        );
+        return response;
+    } catch (error) {
+        console.error('ምርት መጨመር አልተቻለም:', error);
+        throw error;
+    }
+}
+
+async function updateProductInAppwrite(docId, name, price, category, image, description) {
+    try {
+        const response = await databases.updateDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_PRODUCTS,
+            docId,
+            { name, price, category, image, description }
+        );
+        return response;
+    } catch (error) {
+        console.error('ምርት ማስተካከል አልተቻለም:', error);
+        throw error;
+    }
+}
+
+async function deleteProductFromAppwrite(docId) {
+    try {
+        await databases.deleteDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_PRODUCTS,
+            docId
+        );
+        return true;
+    } catch (error) {
+        console.error('ምርት መሰረዝ አልተቻለም:', error);
+        throw error;
+    }
+}
+
+// ============================================================
+// ካታጎሪዎች (ከAppwrite)
+// ============================================================
+async function loadCategoriesFromAppwrite() {
+    try {
+        const response = await databases.listDocuments(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_CATEGORIES
+        );
+        const cats = response.documents.map(doc => doc.name);
+        return ['ሁሉም', ...cats];
+    } catch (error) {
+        console.error('ካታጎሪዎችን ማግኘት አልተቻለም:', error);
+        return ['ሁሉም'];
+    }
+}
+
+async function addCategoryToAppwrite(name) {
+    try {
+        const response = await databases.createDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_CATEGORIES,
+            'unique()',
+            { name }
+        );
+        return response;
+    } catch (error) {
+        console.error('ካታጎሪ መጨመር አልተቻለም:', error);
+        throw error;
+    }
+}
+
+async function deleteCategoryFromAppwrite(docId) {
+    try {
+        await databases.deleteDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_CATEGORIES,
+            docId
+        );
+        return true;
+    } catch (error) {
+        console.error('ካታጎሪ መሰረዝ አልተቻለም:', error);
+        throw error;
+    }
+}
+
+// ============================================================
+// ትዕዛዞች (ከAppwrite)
+// ============================================================
+async function saveOrderToAppwrite(orderData) {
+    try {
+        const response = await databases.createDocument(
+            APPRWRITE_DATABASE_ID,
+            COLLECTION_ORDERS,
+            'unique()',
+            {
+                customerName: orderData.name,
+                customerPhone: orderData.phone,
+                customerAddress: orderData.address,
+                items: JSON.stringify(orderData.items),
+                total: orderData.total,
+                paymentAccount: orderData.paymentAccount || '',
+                status: 'pending',
+                createdAt: new Date().toISOString()
             }
-        });
+        );
+        return response;
+    } catch (error) {
+        console.error('ትዕዛዝ ማስቀመጥ አልተቻለም:', error);
+        throw error;
     }
-});
-
-// ======================== ወቅታዊ እቃዎች ========================
-function getFeatured() {
-    const stored = localStorage.getItem('awashFeatured');
-    if (stored) {
-        try { return JSON.parse(stored); }
-        catch { return []; }
-    }
-    const def = [
-        { name:"ለተማሪ ላፕቶፕ ቦርሳ", desc:"ልዩ ቅናሽ", price:1800, image:"https://picsum.photos/seed/feat1/400/300" },
-        { name:"ወንዶች ስፖርት ጫማ", desc:"አዲስ ሞዴል", price:3500, image:"https://picsum.photos/seed/feat2/400/300" },
-        { name:"የሴቶች የእጅ ቦርሳ", desc:"ከቆዳ", price:2200, image:"https://picsum.photos/seed/feat3/400/300" },
-        { name:"ህፃናት መጫወቻ ስብስብ", desc:"ደህንነቱ የተጠበቀ", price:950, image:"https://picsum.photos/seed/feat4/400/300" }
-    ];
-    localStorage.setItem('awashFeatured', JSON.stringify(def));
-    return def;
-}
-function saveFeatured(featured) {
-    localStorage.setItem('awashFeatured', JSON.stringify(featured));
 }
 
-// ======================== መሰረታዊ መረጃ ========================
-const DEFAULT_CATEGORIES = [
-  "ሁሉም", "ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", "የውበት መጠበቂያ", "ኤሌክትሮኒክስ",
-  "የቤት እቃ", "የግንባታ እቃዎች", "ሱፐር ማርኬት", "የሴት አልባሳት",
-  "የወንዶች አልባሳት", "የህፃን ወንዶች አልባሳት", "የህፃን ሴቶች አልባሳት",
-  "የልጆች መጫወቻ", "የትምህርት ቤት ቁሳቁሶች"
-];
-
-const DEFAULT_PRODUCTS = [
-  { id:1, name:"ስማርት ብርሃን መቆጣጠሪያ", price:1200, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/smart1/300/300", description:"በርቀት መቆጣጠር የሚቻል ዘመናዊ መብራት፣ ኢነርጂ ይቆጥባል" },
-  { id:2, name:"አውቶማቲክ እጥበት መሳሪያ", price:2500, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/auto1/300/300", description:"እጥበትን በራስ-ሰር የሚቆጣጠር፣ ጊዜን ይቆጥባል" },
-  { id:3, name:"የፊት መጠበቂያ ክሬም", price:450, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/cream1/300/300", description:"ተፈጥሯዊ ንጥረ ነገሮችን ይዟል፣ ፊትን ያነጻል" },
-  { id:4, name:"ተፈጥሯዊ ዘይት", price:600, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/oil1/300/300", description:"ከተፈጥሮ የተውጣጣ ዘይት፣ ቆዳን ያለሰለስ" },
-  { id:5, name:"ስማርት ስልክ 128GB", price:18900, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/phoneX/300/300", description:"ከፍተኛ ፍጥነት ያለው ስልክ፣ ጥሩ ካሜራ እና ረጅም ባትሪ" },
-  { id:6, name:"የጆሮ ማዳመጫ ብሉቱዝ", price:3200, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/headX/300/300", description:"ከፍተኛ ጥራት ያለው ድምጽ፣ ረጅም የባትሪ ህይወት" },
-  { id:7, name:"ምቹ ሶፋ (3 ሰው)", price:8500, category:"የቤት እቃ", image:"https://picsum.photos/seed/sofa1/300/300", description:"ለስላሳ እና ምቹ ሶፋ፣ ዘመናዊ ዲዛይን" },
-  { id:8, name:"የእንጨት ጠረጴዛ", price:4200, category:"የቤት እቃ", image:"https://picsum.photos/seed/table1/300/300", description:"ከጥራት እንጨት የተሰራ፣ ለረጅም ጊዜ የሚቆይ" },
-  { id:9, name:"ሲሚንቶ 50ኪግ", price:800, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/cement1/300/300", description:"ከፍተኛ ጥራት ያለው ሲሚንቶ፣ ለግንባታ ተስማሚ" },
-  { id:10, name:"ብረት ማጠፊያ", price:1500, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/iron1/300/300", description:"ጠንካራ እና ዘላቂ የብረት ማጠፊያ" },
-  { id:11, name:"የበቆሎ ዱቄት 5ኪግ", price:300, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/flour1/300/300", description:"ንጹህ እና ጥራት ያለው የበቆሎ ዱቄት" },
-  { id:12, name:"የወተት ቅቤ 1ኪግ", price:450, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/butter1/300/300", description:"ከፍተኛ ጥራት ያለው የወተት ቅቤ፣ ለምግብነት ተስማሚ" },
-  { id:13, name:"የሴቶች ቀሚስ (ካታን)", price:1200, category:"የሴት አልባሳት", image:"https://picsum.photos/seed/dress1/300/300", description:"ዘመናዊ እና ምቹ የሴቶች ቀሚስ" },
-  { id:14, name:"የወንዶች ሸሚዝ", price:800, category:"የወንዶች አልባሳት", image:"https://picsum.photos/seed/shirt1/300/300", description:"ከፍተኛ ጥራት ያለው ሸሚዝ፣ ለቀን እና ለልዩ ዝግጅት" },
-  { id:15, name:"የልጅ ሱሪ (ቦይ)", price:500, category:"የህፃን ወንዶች አልባሳት", image:"https://picsum.photos/seed/kidboy1/300/300", description:"ለልጆች ምቹ እና ጠንካራ ሱሪ" },
-  { id:16, name:"የልጅ ቀሚስ (ገርል)", price:550, category:"የህፃን ሴቶች አልባሳት", image:"https://picsum.photos/seed/kidgirl1/300/300", description:"ቆንጆ እና ለስላሳ የልጅ ቀሚስ" },
-  { id:17, name:"የርቀት መቆጣጠሪያ መኪና", price:700, category:"የልጆች መጫወቻ", image:"https://picsum.photos/seed/toycar1/300/300", description:"በርቀት የሚቆጣጠር መኪና፣ ለልጆች አስደሳች" },
-  { id:18, name:"ማስታወሻ ደብተር (A4)", price:150, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/notebook1/300/300", description:"ጥራት ያለው የማስታወሻ ደብተር፣ ለትምህርት ተስማሚ" },
-  { id:19, name:"ባለቀለም እርሳስ ስብስብ", price:280, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/pencil1/300/300", description:"12 ባለቀለም እርሳሶች፣ ለስዕል እና ለጽሁፍ" }
-];
-
-// ======================== የLocalStorage አስተዳደር ========================
-function loadCategories() {
-  const stored = localStorage.getItem('awashCategories');
-  if (stored) { try { return JSON.parse(stored); } catch { return [...DEFAULT_CATEGORIES]; } }
-  localStorage.setItem('awashCategories', JSON.stringify(DEFAULT_CATEGORIES));
-  return [...DEFAULT_CATEGORIES];
-}
-function loadProducts() {
-  const stored = localStorage.getItem('awashProducts');
-  if (stored) { try { return JSON.parse(stored); } catch { return [...DEFAULT_PRODUCTS]; } }
-  localStorage.setItem('awashProducts', JSON.stringify(DEFAULT_PRODUCTS));
-  return [...DEFAULT_PRODUCTS];
-}
-function saveCategories(cats) { localStorage.setItem('awashCategories', JSON.stringify(cats)); }
-function saveProducts(prods) { localStorage.setItem('awashProducts', JSON.stringify(prods)); }
-
-// ======================== ግሎባል ተለዋዋጮች ========================
-let categories = loadCategories();
-let products = loadProducts();
-let featuredItems = getFeatured();
+// ============================================================
+// ግሎባል ተለዋዋጮች
+// ============================================================
+let products = [];
+let categories = ['ሁሉም'];
 let cart = JSON.parse(localStorage.getItem('awashCart')) || [];
-let currentCategory = "ሁሉም";
+let currentCategory = 'ሁሉም';
 let isAdminLoggedIn = false;
-let bankAccounts = getBankAccounts();
+let bankAccounts = [];
 
-// ======================== DOM ማጣቀሻዎች ========================
+// ============================================================
+// DOM ማጣቀሻዎች
+// ============================================================
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
 const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -939,7 +1005,6 @@ const detailCategory = document.getElementById('detailCategory');
 const detailDescription = document.getElementById('detailDescription');
 const detailPrice = document.getElementById('detailPrice');
 const detailBuyBtn = document.getElementById('detailBuyBtn');
-let currentDetailProductId = null;
 
 // Receipt Modal
 const receiptModal = document.getElementById('receiptModal');
@@ -972,8 +1037,6 @@ const featuredImage = document.getElementById('featuredImage');
 const featuredDesc = document.getElementById('featuredDesc');
 const addFeaturedBtn = document.getElementById('addFeaturedBtn');
 const featuredList = document.getElementById('featuredList');
-
-// Edit Product DOM
 const editProductSelect = document.getElementById('editProductSelect');
 const editProductName = document.getElementById('editProductName');
 const editProductPrice = document.getElementById('editProductPrice');
@@ -983,8 +1046,6 @@ const editProductDesc = document.getElementById('editProductDesc');
 const editProductBtn = document.getElementById('editProductBtn');
 const editClearBtn = document.getElementById('editClearBtn');
 const editStatus = document.getElementById('editStatus');
-
-// Bank Account DOM
 const newBankName = document.getElementById('newBankName');
 const newBankAccount = document.getElementById('newBankAccount');
 const newBankHolder = document.getElementById('newBankHolder');
@@ -992,742 +1053,839 @@ const addBankAccountBtn = document.getElementById('addBankAccountBtn');
 const bankAccountList = document.getElementById('bankAccountList');
 const bankAccountStatus = document.getElementById('bankAccountStatus');
 
-// ======================== ዋና ተግባራት ========================
+// ============================================================
+// ዋና ተግባራት
+// ============================================================
+async function loadAllData() {
+    try {
+        // ካታጎሪዎችን ጫን
+        categories = await loadCategoriesFromAppwrite();
+        // ምርቶችን ጫን
+        products = await loadProductsFromAppwrite();
+        // የባንክ አካውንቶችን ጫን
+        bankAccounts = await getBankAccounts();
+        
+        renderCategories();
+        renderProducts();
+        renderFeatured();
+        updateBadge();
+        populatePaymentAccounts();
+        renderBankAccounts();
+    } catch (error) {
+        console.error('ውሂብ ማግኘት አልተቻለም:', error);
+        productGrid.innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; padding:40px; color:#dc2626;">
+                <i class="fas fa-exclamation-circle" style="font-size:40px; display:block; margin-bottom:10px;"></i>
+                ውሂብ ማግኘት አልተቻለም!<br />
+                <small style="color:#64748b;">Appwrite መያያዝ አልተቻለም። እባክዎ ቅንብሮችዎን ያረጋግጡ።</small>
+            </div>
+        `;
+    }
+}
+
 function renderCategories() {
-  sidebarCategoryList.innerHTML = '';
-  categories.forEach(cat => {
-    const li = document.createElement('li');
-    li.innerHTML = `<i class="fas fa-tag"></i> ${cat}`;
-    li.addEventListener('click', () => { setCategory(cat); closeSidebar(); });
-    sidebarCategoryList.appendChild(li);
-  });
-  categoryStrip.innerHTML = '';
-  categories.forEach(cat => {
-    const span = document.createElement('span');
-    span.textContent = cat;
-    span.addEventListener('click', () => setCategory(cat));
-    if (cat === currentCategory) { span.style.background = '#0b2b4f'; span.style.color = 'white'; }
-    categoryStrip.appendChild(span);
-  });
-  populateCategorySelects();
-  renderCategoryList();
-  populateEditSelect();
+    // Sidebar
+    sidebarCategoryList.innerHTML = '';
+    categories.forEach(cat => {
+        const li = document.createElement('li');
+        li.innerHTML = `<i class="fas fa-tag"></i> ${cat}`;
+        li.addEventListener('click', () => { setCategory(cat); closeSidebar(); });
+        sidebarCategoryList.appendChild(li);
+    });
+    // Strip
+    categoryStrip.innerHTML = '';
+    categories.forEach(cat => {
+        const span = document.createElement('span');
+        span.textContent = cat;
+        span.addEventListener('click', () => setCategory(cat));
+        if (cat === currentCategory) {
+            span.style.background = '#0b2b4f';
+            span.style.color = 'white';
+        }
+        categoryStrip.appendChild(span);
+    });
+    populateCategorySelects();
 }
 
 function populateCategorySelects() {
-  const selects = [newProductCategory, editProductCategory];
-  selects.forEach(sel => {
-    sel.innerHTML = '';
-    categories.forEach(cat => {
-      const opt = document.createElement('option');
-      opt.value = cat;
-      opt.textContent = cat;
-      sel.appendChild(opt);
+    const selects = [newProductCategory, editProductCategory];
+    selects.forEach(sel => {
+        if (!sel) return;
+        sel.innerHTML = '';
+        categories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            sel.appendChild(opt);
+        });
     });
-  });
 }
 
-function populateEditSelect() {
-  editProductSelect.innerHTML = '';
-  products.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p.id;
-    opt.textContent = p.name + ' (' + p.price + ' ብር)';
-    editProductSelect.appendChild(opt);
-  });
-  if (products.length > 0) {
-    loadEditProduct(products[0]);
-    editProductSelect.value = products[0].id;
-  } else {
-    editProductName.value = '';
-    editProductPrice.value = '';
-    editProductCategory.value = '';
-    editProductImage.value = '';
-    editProductDesc.value = '';
-  }
-  editProductSelect.onchange = function() {
-    const id = parseInt(this.value);
-    const product = products.find(p => p.id === id);
-    if (product) loadEditProduct(product);
-  };
-}
-
-function loadEditProduct(product) {
-  editProductName.value = product.name;
-  editProductPrice.value = product.price;
-  editProductCategory.value = product.category;
-  editProductImage.value = product.image || '';
-  editProductDesc.value = product.description || '';
-  editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
-  editStatus.style.color = '#2563eb';
-}
-
-function renderCategoryList() {
-  categoryList.innerHTML = '';
-  categories.forEach(cat => {
-    if (cat === 'ሁሉም') return;
-    const div = document.createElement('div');
-    div.className = 'admin-list-item';
-    div.innerHTML = `
-      <span class="item-info">📂 ${cat}</span>
-      <button class="admin-btn-danger" onclick="deleteCategory('${cat}')">🗑️ ሰርዝ</button>
-    `;
-    categoryList.appendChild(div);
-  });
-}
-
-function renderProductList() {
-  productList.innerHTML = '';
-  products.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'admin-list-item';
-    div.innerHTML = `
-      <span class="item-info">🛒 ${p.name} - ${p.price} ብር <small>(${p.category})</small></span>
-      <div>
-        <button class="admin-btn-warning" onclick="loadProductForEdit(${p.id})">✏️</button>
-        <button class="admin-btn-danger" onclick="deleteProduct(${p.id})">🗑️</button>
-      </div>
-    `;
-    productList.appendChild(div);
-  });
-  populateEditSelect();
-}
-
-function loadProductForEdit(id) {
-  const product = products.find(p => p.id === id);
-  if (product) {
-    editProductSelect.value = id;
-    loadEditProduct(product);
-    editStatus.textContent = '✅ ለማስተካከል ተዘጋጅቷል: ' + product.name;
-    editStatus.style.color = '#16a34a';
-    document.querySelector('.admin-section:last-child').scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-function renderFeaturedList() {
-  featuredList.innerHTML = '';
-  featuredItems.forEach((item, index) => {
-    const div = document.createElement('div');
-    div.className = 'admin-list-item';
-    div.innerHTML = `
-      <span class="item-info">⚡ ${item.name} - ${item.price} ብር <small>${item.desc || ''}</small></span>
-      <button class="admin-btn-danger" onclick="deleteFeatured(${index})">🗑️ ሰርዝ</button>
-    `;
-    featuredList.appendChild(div);
-  });
+function renderProducts(category = currentCategory, searchTerm = '') {
+    let filtered = products;
+    if (category !== 'ሁሉም') {
+        filtered = filtered.filter(p => p.category === category);
+    }
+    if (searchTerm.trim()) {
+        const term = searchTerm.trim().toLowerCase();
+        filtered = filtered.filter(p =>
+            p.name.toLowerCase().includes(term) ||
+            p.category.toLowerCase().includes(term) ||
+            (p.description && p.description.toLowerCase().includes(term))
+        );
+    }
+    productGrid.innerHTML = '';
+    if (filtered.length === 0) {
+        productGrid.innerHTML = `
+            <p style="grid-column:1/-1; text-align:center; padding:30px; color:#64748b;">
+                ምንም እቃ አልተገኘም
+            </p>
+        `;
+        return;
+    }
+    filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${p.image}" alt="${p.name}" loading="lazy" />
+            <h3>${p.name}</h3>
+            <div class="description">${p.description || 'ጠቃሚ እቃ'}</div>
+            <span class="read-more" onclick="openProductDetail('${p.id}')">📖 ሙሉውን ያንቡ</span>
+            <div class="price">${p.price.toLocaleString()} <small>ብር</small></div>
+            <button class="buy-btn" onclick="addToCartById('${p.id}')">
+                <i class="fas fa-shopping-bag"></i> ይግዙ
+            </button>
+        `;
+        productGrid.appendChild(card);
+    });
+    activeCategoryTitle.textContent = category === 'ሁሉም' ? 'ሁሉም እቃዎች' : category;
 }
 
 function renderFeatured() {
-  featuredScroll.innerHTML = '';
-  featuredItems.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'featured-card';
-    div.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" loading="lazy" />
-      <h4>${item.name}</h4>
-      <p>${item.desc || ''}</p>
-      <div class="price">${item.price.toLocaleString()} ብር</div>
-      <button class="buy-now-btn" onclick="addFeaturedToCart('${item.name}', ${item.price})">🛒 ይግዙ</button>
-    `;
-    featuredScroll.appendChild(div);
-  });
-}
-
-function addFeaturedToCart(name, price) {
-  const product = products.find(p => p.name === name && p.price === price);
-  if (product) { addToCart(product); }
-  else {
-    const newProduct = { id: Date.now(), name, price, category: 'ወቅታዊ', image: 'https://picsum.photos/seed/' + Date.now() + '/300/300', description: '' };
-    addToCart(newProduct);
-  }
-}
-
-function openProductDetail(productId) {
-  const product = products.find(p => p.id === productId);
-  if (!product) return;
-  currentDetailProductId = product.id;
-  detailImage.src = product.image;
-  detailName.textContent = product.name;
-  detailCategory.textContent = '📂 ' + product.category;
-  detailDescription.textContent = product.description || 'ጠቃሚ እቃ';
-  detailPrice.textContent = product.price.toLocaleString() + ' ብር';
-  detailBuyBtn.setAttribute('data-id', product.id);
-  productDetailModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeProductDetail() {
-  productDetailModal.classList.remove('active');
-  document.body.style.overflow = 'auto';
-  currentDetailProductId = null;
-}
-
-detailBuyBtn.addEventListener('click', function() {
-  const id = parseInt(this.getAttribute('data-id'));
-  const product = products.find(p => p.id === id);
-  if (product) {
-    addToCart(product);
-    closeProductDetail();
-  }
-});
-
-detailCloseBtn.addEventListener('click', closeProductDetail);
-productDetailModal.addEventListener('click', function(e) {
-  if (e.target === this) closeProductDetail();
-});
-
-function renderProducts(category = currentCategory, searchTerm = '') {
-  let filtered = products;
-  if (category !== 'ሁሉም') filtered = filtered.filter(p => p.category === category);
-  if (searchTerm.trim()) {
-    const term = searchTerm.trim().toLowerCase();
-    filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || (p.description && p.description.toLowerCase().includes(term)));
-  }
-  productGrid.innerHTML = '';
-  if (filtered.length === 0) {
-    productGrid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:30px; color:#64748b;">ምንም እቃ አልተገኘም</p>`;
-    return;
-  }
-  filtered.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" loading="lazy" />
-      <h3>${p.name}</h3>
-      <div class="description">${p.description || 'ጠቃሚ እቃ'}</div>
-      <span class="read-more" onclick="openProductDetail(${p.id})">📖 ሙሉውን ያንቡ</span>
-      <div class="price">${p.price.toLocaleString()} <small>ብር</small></div>
-      <button class="buy-btn" onclick="addToCartById(${p.id})"><i class="fas fa-shopping-bag"></i> ይግዙ</button>
-    `;
-    productGrid.appendChild(card);
-  });
-  activeCategoryTitle.textContent = category === 'ሁሉም' ? 'ሁሉም እቃዎች' : category;
-}
-
-function addToCartById(id) {
-  const product = products.find(p => p.id === id);
-  if (product) addToCart(product);
+    // ለሙከራ የተወሰኑ ምርቶችን እናሳይ
+    const featured = products.slice(0, 4);
+    featuredScroll.innerHTML = '';
+    if (featured.length === 0) {
+        featuredScroll.innerHTML = '<p style="padding:20px; color:#64748b;">ምንም ወቅታዊ እቃዎች የሉም</p>';
+        return;
+    }
+    featured.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'featured-card';
+        div.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" loading="lazy" />
+            <h4>${item.name}</h4>
+            <p>${item.description || ''}</p>
+            <div class="price">${item.price.toLocaleString()} ብር</div>
+            <button class="buy-now-btn" onclick="addToCartById('${item.id}')">🛒 ይግዙ</button>
+        `;
+        featuredScroll.appendChild(div);
+    });
 }
 
 function setCategory(cat) {
-  currentCategory = cat;
-  document.querySelectorAll('#categoryStrip span').forEach(el => {
-    el.style.background = el.textContent === cat ? '#0b2b4f' : '#f1f5f9';
-    el.style.color = el.textContent === cat ? 'white' : '#1e293b';
-  });
-  renderProducts(cat, searchInput.value);
+    currentCategory = cat;
+    document.querySelectorAll('#categoryStrip span').forEach(el => {
+        el.style.background = el.textContent === cat ? '#0b2b4f' : '#f1f5f9';
+        el.style.color = el.textContent === cat ? 'white' : '#1e293b';
+    });
+    renderProducts(cat, searchInput.value);
 }
 
-// ======================== የአስተዳዳሪ ተግባራት ========================
-function deleteCategory(cat) {
-  if (!confirm(`"${cat}" ካታጎሪን መሰረዝ እርግጠኛ ነዎት?`)) return;
-  categories = categories.filter(c => c !== cat);
-  saveCategories(categories);
-  products = products.filter(p => p.category !== cat);
-  saveProducts(products);
-  if (currentCategory === cat) setCategory('ሁሉም');
-  renderCategories();
-  renderProductList();
-  renderProducts(currentCategory, searchInput.value);
+// ============================================================
+// የምርት ዝርዝር
+// ============================================================
+function openProductDetail(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    detailImage.src = product.image;
+    detailName.textContent = product.name;
+    detailCategory.textContent = '📂 ' + product.category;
+    detailDescription.textContent = product.description || 'ጠቃሚ እቃ';
+    detailPrice.textContent = product.price.toLocaleString() + ' ብር';
+    detailBuyBtn.setAttribute('data-id', product.id);
+    productDetailModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-function deleteProduct(id) {
-  if (!confirm('ይህን እቃ መሰረዝ እርግጠኛ ነዎት?')) return;
-  products = products.filter(p => p.id !== id);
-  saveProducts(products);
-  renderProductList();
-  renderProducts(currentCategory, searchInput.value);
-  populateEditSelect();
+function closeProductDetail() {
+    productDetailModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
 }
 
-function deleteFeatured(index) {
-  if (!confirm('ይህን ወቅታዊ እቃ መሰረዝ እርግጠኛ ነዎት?')) return;
-  featuredItems.splice(index, 1);
-  saveFeatured(featuredItems);
-  renderFeaturedList();
-  renderFeatured();
+detailCloseBtn.addEventListener('click', closeProductDetail);
+productDetailModal.addEventListener('click', (e) => {
+    if (e.target === productDetailModal) closeProductDetail();
+});
+
+detailBuyBtn.addEventListener('click', function() {
+    const id = this.getAttribute('data-id');
+    addToCartById(id);
+    closeProductDetail();
+});
+
+// ============================================================
+// ጋሪ ስራዎች
+// ============================================================
+function addToCartById(id) {
+    const product = products.find(p => p.id === id);
+    if (product) addToCart(product);
 }
 
-function addCategory() {
-  const name = newCategoryInput.value.trim();
-  if (!name) { alert('እባክዎ የካታጎሪ ስም ይሙሉ!'); return; }
-  if (categories.includes(name)) { alert('ይህ ካታጎሪ አለ!'); return; }
-  categories.push(name);
-  saveCategories(categories);
-  newCategoryInput.value = '';
-  renderCategories();
-  renderCategoryList();
-  renderProducts(currentCategory, searchInput.value);
-  alert(`✅ "${name}" ካታጎሪ ተጨምሯል!`);
+function addToCart(product) {
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+    saveCart();
+    updateBadge();
+    alert(`✅ ${product.name} ወደ ጋሪ ተጨምሯል!`);
 }
 
-function addProduct() {
-  const name = newProductName.value.trim();
-  const price = parseFloat(newProductPrice.value);
-  const category = newProductCategory.value;
-  const image = newProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
-  const description = newProductDesc.value.trim() || 'ጠቃሚ እቃ';
-  if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
-  if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
-  const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-  const newProduct = { id: newId, name, price, category, image, description };
-  products.push(newProduct);
-  saveProducts(products);
-  newProductName.value = ''; newProductPrice.value = ''; newProductImage.value = ''; newProductDesc.value = '';
-  renderProductList();
-  renderProducts(currentCategory, searchInput.value);
-  populateEditSelect();
-  alert(`✅ "${name}" እቃ ተጨምሯል!`);
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    saveCart();
+    updateBadge();
+    renderCartModal();
 }
 
-function editProduct() {
-  const id = parseInt(editProductSelect.value);
-  const product = products.find(p => p.id === id);
-  if (!product) { alert('እቃ አልተገኘም!'); return; }
-  
-  const name = editProductName.value.trim();
-  const price = parseFloat(editProductPrice.value);
-  const category = editProductCategory.value;
-  const image = editProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
-  const description = editProductDesc.value.trim() || 'ጠቃሚ እቃ';
-  
-  if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
-  if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
-  
-  const oldName = product.name;
-  product.name = name;
-  product.price = price;
-  product.category = category;
-  product.image = image;
-  product.description = description;
-  
-  saveProducts(products);
-  renderProductList();
-  renderProducts(currentCategory, searchInput.value);
-  populateEditSelect();
-  
-  editProductSelect.value = id;
-  loadEditProduct(product);
-  
-  editStatus.textContent = '✅ እቃ "' + oldName + '" በተሳካ ሁኔታ ተስተካክሏል!';
-  editStatus.style.color = '#16a34a';
-  setTimeout(() => {
-    editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
-    editStatus.style.color = '#2563eb';
-  }, 4000);
-  
-  alert('✅ "' + oldName + '" እቃ በተሳካ ሁኔታ ተስተካክሏል!');
+function changeQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.quantity += delta;
+    if (item.quantity <= 0) {
+        removeFromCart(id);
+        return;
+    }
+    saveCart();
+    updateBadge();
+    renderCartModal();
 }
 
-function clearEditForm() {
-  const id = parseInt(editProductSelect.value);
-  const product = products.find(p => p.id === id);
-  if (product) {
-    loadEditProduct(product);
-    editStatus.textContent = '🔄 መረጃዎች ወደ መጀመሪያው ተመልሰዋል';
-    editStatus.style.color = '#f59e0b';
-    setTimeout(() => {
-      editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
-      editStatus.style.color = '#2563eb';
-    }, 2000);
-  }
+function saveCart() {
+    localStorage.setItem('awashCart', JSON.stringify(cart));
 }
 
-function addFeatured() {
-  const name = featuredName.value.trim();
-  const price = parseFloat(featuredPrice.value);
-  const image = featuredImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/400/300';
-  const desc = featuredDesc.value.trim();
-  if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
-  if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
-  featuredItems.push({ name, price, image, desc });
-  saveFeatured(featuredItems);
-  featuredName.value = ''; featuredPrice.value = ''; featuredImage.value = ''; featuredDesc.value = '';
-  renderFeaturedList();
-  renderFeatured();
-  alert(`✅ "${name}" ወቅታዊ እቃ ተጨምሯል!`);
+function updateBadge() {
+    const total = cart.reduce((sum, i) => sum + i.quantity, 0);
+    cartBadge.textContent = total;
 }
 
-// ======================== የባንክ አካውንት ተግባራት ========================
-function renderBankAccounts() {
-    const accounts = getBankAccounts();
+function renderCartModal() {
+    if (cart.length === 0) {
+        cartItemsList.innerHTML = `<div class="empty-cart">🛒 ጋሪዎ ባዶ ነው</div>`;
+        cartTotal.textContent = 'ጠቅላላ፦ 0 ብር';
+        return;
+    }
+    let html = '',
+        total = 0;
+    cart.forEach(item => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        html += `
+            <div class="cart-item">
+                <div class="item-info">
+                    <strong>${item.name}</strong>
+                    <small>${item.price.toLocaleString()} ብር × ${item.quantity}</small>
+                </div>
+                <div class="qty-control">
+                    <button onclick="changeQty('${item.id}', -1)">−</button>
+                    <span style="min-width:24px;text-align:center;">${item.quantity}</span>
+                    <button onclick="changeQty('${item.id}', 1)">+</button>
+                    <button class="danger" onclick="removeFromCart('${item.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    cartItemsList.innerHTML = html;
+    cartTotal.textContent = `ጠቅላላ፦ ${total.toLocaleString()} ብር`;
+}
+
+function openCartModal() {
+    renderCartModal();
+    cartModal.classList.add('active');
+}
+
+function closeCartModal() {
+    cartModal.classList.remove('active');
+}
+
+cartIconBtn.addEventListener('click', openCartModal);
+closeCartBtn.addEventListener('click', closeCartModal);
+cartModal.addEventListener('click', (e) => {
+    if (e.target === cartModal) closeCartModal();
+});
+
+// ============================================================
+// የባንክ አካውንት ማሳያ
+// ============================================================
+function populatePaymentAccounts() {
+    const select = document.getElementById('paymentAccountSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- አካውንት ይምረጡ --</option>';
+    bankAccounts.forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc.id;
+        opt.textContent = acc.bank + ' - ' + acc.account + ' (' + acc.holder + ')';
+        select.appendChild(opt);
+    });
+    if (bankAccounts.length > 0) {
+        updatePaymentDisplay(bankAccounts[0]);
+        select.value = bankAccounts[0].id;
+    }
+}
+
+function updatePaymentDisplay(account) {
+    bankAccountDisplay.textContent = account.bank + ': ' + account.account;
+    bankNameDisplay.textContent = 'ስም፡ ' + account.holder;
+    bankLabelDisplay.textContent = 'ባንክ፡ ' + account.bank;
+}
+
+paymentAccountSelect.addEventListener('change', function() {
+    const id = this.value;
+    const account = bankAccounts.find(a => a.id === id);
+    if (account) updatePaymentDisplay(account);
+});
+
+// ============================================================
+// የአስተዳዳሪ ፓነል ተግባራት
+// ============================================================
+function checkAdminVisibility() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin');
+    if (adminParam === ADMIN_SHOW_KEY) {
+        document.getElementById('adminOpenBtn').classList.add('visible');
+    }
+}
+
+adminOpenBtn.addEventListener('click', () => {
+    adminModal.classList.add('active');
+    adminLoginSection.style.display = 'block';
+    adminContent.style.display = 'none';
+    adminPassword.value = '';
+    renderBankAccounts();
+    populateCategorySelects();
+    populateEditSelect();
+});
+
+adminCloseBtn.addEventListener('click', () => {
+    adminModal.classList.remove('active');
+    isAdminLoggedIn = false;
+});
+
+adminModal.addEventListener('click', (e) => {
+    if (e.target === adminModal) {
+        adminModal.classList.remove('active');
+        isAdminLoggedIn = false;
+    }
+});
+
+adminLoginBtn.addEventListener('click', () => {
+    const pass = adminPassword.value.trim();
+    if (verifyAdminPassword(pass)) {
+        isAdminLoggedIn = true;
+        adminLoginSection.style.display = 'none';
+        adminContent.style.display = 'block';
+        renderBankAccounts();
+        populateCategorySelects();
+        populateEditSelect();
+    } else {
+        alert('❌ የተሳሳተ ፓስዎርድ!');
+    }
+});
+
+adminPassword.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') adminLoginBtn.click();
+});
+
+changePassBtn.addEventListener('click', function() {
+    const newPass = newAdminPass.value.trim();
+    if (newPass) {
+        if (changeAdminPassword(newPass)) newAdminPass.value = '';
+    } else {
+        alert('እባክዎ አዲስ ፓስዎርድ ያስገቡ!');
+    }
+});
+
+newAdminPass.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') changePassBtn.click();
+});
+
+// ============================================================
+// የአስተዳዳሪ - የባንክ አካውንቶች
+// ============================================================
+async function renderBankAccounts() {
+    bankAccounts = await getBankAccounts();
     bankAccountList.innerHTML = '';
-    if (accounts.length === 0) {
+    if (bankAccounts.length === 0) {
         bankAccountList.innerHTML = '<p class="text-sm" style="color:#64748b;">ምንም የባንክ አካውንት አልተገኘም</p>';
         return;
     }
-    accounts.forEach(acc => {
+    bankAccounts.forEach(acc => {
         const div = document.createElement('div');
         div.className = 'admin-list-item';
         div.innerHTML = `
             <span class="item-info">🏦 ${acc.bank} - ${acc.account} <small>(${acc.holder})</small></span>
-            <button class="admin-btn-danger" onclick="deleteBankAccountHandler(${acc.id})">🗑️ ሰርዝ</button>
+            <button class="admin-btn-danger" onclick="deleteBankAccountHandler('${acc.id}')">🗑️ ሰርዝ</button>
         `;
         bankAccountList.appendChild(div);
     });
 }
 
-function addBankAccountHandler() {
+async function addBankAccountHandler() {
     const bank = newBankName.value.trim();
     const account = newBankAccount.value.trim();
     const holder = newBankHolder.value.trim();
-    
     if (!bank) { alert('እባክዎ የባንክ ስም ያስገቡ!'); return; }
     if (!account) { alert('እባክዎ የአካውንት ቁጥር ያስገቡ!'); return; }
-    if (!holder) { alert('እባክዎ የባንክ ባለቤት ስም ያስገቡ!'); return; }
-    
-    const accounts = addBankAccount(bank, account, holder);
-    newBankName.value = '';
-    newBankAccount.value = '';
-    newBankHolder.value = '';
-    renderBankAccounts();
-    populatePaymentAccounts();
-    bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተጨምሯል!';
-    bankAccountStatus.className = 'text-sm mt-8 text-success';
-    setTimeout(() => {
-        bankAccountStatus.textContent = '';
-    }, 3000);
-}
-
-function deleteBankAccountHandler(id) {
-    if (!confirm('ይህን የባንክ አካውንት መሰረዝ እርግጠኛ ነዎት?')) return;
-    const accounts = deleteBankAccount(id);
-    renderBankAccounts();
-    populatePaymentAccounts();
-    // አሁን ያለውን አካውንት እንደገና አሳይ
-    const currentAccounts = getBankAccounts();
-    if (currentAccounts.length > 0) {
-        updatePaymentDisplay(currentAccounts[0]);
-        paymentAccountSelect.value = currentAccounts[0].id;
+    if (!holder) { alert('እባክዎ የባለቤት ስም ያስገቡ!'); return; }
+    try {
+        await addBankAccount(bank, account, holder);
+        newBankName.value = '';
+        newBankAccount.value = '';
+        newBankHolder.value = '';
+        await renderBankAccounts();
+        await populatePaymentAccounts();
+        bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተጨምሯል!';
+        bankAccountStatus.className = 'text-sm mt-8 text-success';
+        setTimeout(() => { bankAccountStatus.textContent = ''; }, 3000);
+    } catch (error) {
+        alert('❌ አካውንት መጨመር አልተቻለም!');
     }
-    bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተሰርዟል!';
-    bankAccountStatus.className = 'text-sm mt-8 text-success';
-    setTimeout(() => {
-        bankAccountStatus.textContent = '';
-    }, 3000);
 }
 
-// ======================== የአስተዳዳሪ ፓነል መክፈቻ ========================
-function checkAdminVisibility() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const adminParam = urlParams.get('admin');
-  if (adminParam === ADMIN_SHOW_KEY) {
-    document.getElementById('adminOpenBtn').classList.add('visible');
-  }
+async function deleteBankAccountHandler(id) {
+    if (!confirm('ይህን የባንክ አካውንት መሰረዝ እርግጠኛ ነዎት?')) return;
+    try {
+        await deleteBankAccount(id);
+        await renderBankAccounts();
+        await populatePaymentAccounts();
+        bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተሰርዟል!';
+        bankAccountStatus.className = 'text-sm mt-8 text-success';
+        setTimeout(() => { bankAccountStatus.textContent = ''; }, 3000);
+    } catch (error) {
+        alert('❌ አካውንት መሰረዝ አልተቻለም!');
+    }
 }
 
-adminOpenBtn.addEventListener('click', () => {
-  adminModal.classList.add('active');
-  adminLoginSection.style.display = 'block';
-  adminContent.style.display = 'none';
-  adminPassword.value = '';
-  renderCategoryList();
-  renderProductList();
-  renderFeaturedList();
-  renderBankAccounts();
-  populateCategorySelects();
-  populateEditSelect();
-});
-
-adminCloseBtn.addEventListener('click', () => {
-  adminModal.classList.remove('active');
-  isAdminLoggedIn = false;
-});
-adminModal.addEventListener('click', (e) => {
-  if (e.target === adminModal) { adminModal.classList.remove('active'); isAdminLoggedIn = false; }
-});
-
-adminLoginBtn.addEventListener('click', () => {
-  const pass = adminPassword.value.trim();
-  if (verifyAdminPassword(pass)) {
-    isAdminLoggedIn = true;
-    adminLoginSection.style.display = 'none';
-    adminContent.style.display = 'block';
-    renderCategoryList();
-    renderProductList();
-    renderFeaturedList();
-    renderBankAccounts();
-    populateCategorySelects();
-    populateEditSelect();
-  } else {
-    alert('❌ የተሳሳተ ፓስዎርድ!');
-  }
-});
-adminPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') adminLoginBtn.click(); });
-
-changePassBtn.addEventListener('click', function() {
-  const newPass = newAdminPass.value.trim();
-  if (newPass) { if (changeAdminPassword(newPass)) newAdminPass.value = ''; }
-  else { alert('እባክዎ አዲስ ፓስዎርድ ያስገቡ!'); }
-});
-newAdminPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') changePassBtn.click(); });
-
-addCategoryBtn.addEventListener('click', addCategory);
-newCategoryInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addCategory(); });
-addProductBtn.addEventListener('click', addProduct);
-addFeaturedBtn.addEventListener('click', addFeatured);
 addBankAccountBtn.addEventListener('click', addBankAccountHandler);
 
-editProductBtn.addEventListener('click', editProduct);
-editClearBtn.addEventListener('click', clearEditForm);
-
-// ======================== የጂፒኤስ ========================
-getLocationBtn.addEventListener('click', function() {
-  if (!navigator.geolocation) {
-    locationStatus.textContent = '❌ ጂፒኤስ አይደግፍም';
-    locationStatus.className = 'location-status error';
-    return;
-  }
-  locationStatus.textContent = '⏳ ቦታ እየተፈለገ...';
-  locationStatus.className = 'location-status';
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      custLat.value = pos.coords.latitude;
-      custLng.value = pos.coords.longitude;
-      locationStatus.innerHTML = `✅ ቦታ ተመዝግቧል! <a href="https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}" target="_blank">(እዚህ)</a>`;
-      locationStatus.className = 'location-status success';
-    },
-    (err) => {
-      let msg = '❌ ቦታ አልተገኘም ';
-      if (err.code === 1) msg += 'ፍቃድ ይስጡ!';
-      else if (err.code === 2) msg += 'ምልክት የለም';
-      else msg += 'ዳግም ይሞክሩ';
-      locationStatus.textContent = msg;
-      locationStatus.className = 'location-status error';
-    },
-    { enableHighAccuracy: true, timeout: 15000 }
-  );
+// ============================================================
+// የአስተዳዳሪ - ካታጎሪ
+// ============================================================
+addCategoryBtn.addEventListener('click', async function() {
+    const name = newCategoryInput.value.trim();
+    if (!name) { alert('እባክዎ የካታጎሪ ስም ይሙሉ!'); return; }
+    if (categories.includes(name)) { alert('ይህ ካታጎሪ አለ!'); return; }
+    try {
+        await addCategoryToAppwrite(name);
+        newCategoryInput.value = '';
+        await loadAllData();
+        alert(`✅ "${name}" ካታጎሪ ተጨምሯል!`);
+    } catch (error) {
+        alert('❌ ካታጎሪ መጨመር አልተቻለም!');
+    }
 });
 
-// ======================== የጋሪ ስራዎች ========================
-function addToCart(product) {
-  const existing = cart.find(item => item.id === product.id);
-  if (existing) { existing.quantity += 1; }
-  else { cart.push({ ...product, quantity: 1 }); }
-  saveCart(); updateBadge();
-  alert(`✅ ${product.name} ወደ ጋሪ ተጨምሯል!`);
+newCategoryInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addCategoryBtn.click();
+});
+
+// ============================================================
+// የአስተዳዳሪ - ምርቶች
+// ============================================================
+function populateEditSelect() {
+    editProductSelect.innerHTML = '';
+    products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name + ' (' + p.price + ' ብር)';
+        editProductSelect.appendChild(opt);
+    });
+    if (products.length > 0) {
+        loadEditProduct(products[0]);
+        editProductSelect.value = products[0].id;
+    }
+    editProductSelect.onchange = function() {
+        const id = this.value;
+        const product = products.find(p => p.id === id);
+        if (product) loadEditProduct(product);
+    };
 }
 
-function removeFromCart(id) {
-  cart = cart.filter(item => item.id !== id);
-  saveCart(); updateBadge(); renderCartModal();
+function loadEditProduct(product) {
+    editProductName.value = product.name;
+    editProductPrice.value = product.price;
+    editProductCategory.value = product.category;
+    editProductImage.value = product.image || '';
+    editProductDesc.value = product.description || '';
+    editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
+    editStatus.style.color = '#2563eb';
 }
 
-function changeQty(id, delta) {
-  const item = cart.find(i => i.id === id);
-  if (!item) return;
-  item.quantity += delta;
-  if (item.quantity <= 0) { removeFromCart(id); return; }
-  saveCart(); updateBadge(); renderCartModal();
+addProductBtn.addEventListener('click', async function() {
+    const name = newProductName.value.trim();
+    const price = parseFloat(newProductPrice.value);
+    const category = newProductCategory.value;
+    const image = newProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
+    const description = newProductDesc.value.trim() || 'ጠቃሚ እቃ';
+    if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
+    if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
+    try {
+        await addProductToAppwrite(name, price, category, image, description);
+        newProductName.value = '';
+        newProductPrice.value = '';
+        newProductImage.value = '';
+        newProductDesc.value = '';
+        await loadAllData();
+        alert(`✅ "${name}" እቃ ተጨምሯል!`);
+    } catch (error) {
+        alert('❌ እቃ መጨመር አልተቻለም!');
+    }
+});
+
+editProductBtn.addEventListener('click', async function() {
+    const id = editProductSelect.value;
+    const product = products.find(p => p.id === id);
+    if (!product) { alert('እቃ አልተገኘም!'); return; }
+    const name = editProductName.value.trim();
+    const price = parseFloat(editProductPrice.value);
+    const category = editProductCategory.value;
+    const image = editProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
+    const description = editProductDesc.value.trim() || 'ጠቃሚ እቃ';
+    if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
+    if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
+    try {
+        await updateProductInAppwrite(id, name, price, category, image, description);
+        await loadAllData();
+        editStatus.textContent = `✅ እቃ "${product.name}" በተሳካ ሁኔታ ተስተካክሏል!`;
+        editStatus.style.color = '#16a34a';
+        setTimeout(() => {
+            editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
+            editStatus.style.color = '#2563eb';
+        }, 4000);
+        alert(`✅ "${product.name}" እቃ በተሳካ ሁኔታ ተስተካክሏል!`);
+    } catch (error) {
+        alert('❌ እቃ ማስተካከል አልተቻለም!');
+    }
+});
+
+editClearBtn.addEventListener('click', function() {
+    const id = editProductSelect.value;
+    const product = products.find(p => p.id === id);
+    if (product) {
+        loadEditProduct(product);
+        editStatus.textContent = '🔄 መረጃዎች ወደ መጀመሪያው ተመልሰዋል';
+        editStatus.style.color = '#f59e0b';
+        setTimeout(() => {
+            editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
+            editStatus.style.color = '#2563eb';
+        }, 2000);
+    }
+});
+
+// ============================================================
+// የአስተዳዳሪ - ወቅታዊ እቃዎች (በLocalStorage)
+// ============================================================
+let featuredItems = JSON.parse(localStorage.getItem('awashFeatured')) || [];
+
+function renderFeaturedList() {
+    featuredList.innerHTML = '';
+    featuredItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'admin-list-item';
+        div.innerHTML = `
+            <span class="item-info">⚡ ${item.name} - ${item.price} ብር <small>${item.desc || ''}</small></span>
+            <button class="admin-btn-danger" onclick="deleteFeatured(${index})">🗑️ ሰርዝ</button>
+        `;
+        featuredList.appendChild(div);
+    });
 }
 
-function saveCart() { localStorage.setItem('awashCart', JSON.stringify(cart)); }
-function updateBadge() {
-  const total = cart.reduce((sum, i) => sum + i.quantity, 0);
-  cartBadge.textContent = total;
+function deleteFeatured(index) {
+    if (!confirm('ይህን ወቅታዊ እቃ መሰረዝ እርግጠኛ ነዎት?')) return;
+    featuredItems.splice(index, 1);
+    localStorage.setItem('awashFeatured', JSON.stringify(featuredItems));
+    renderFeaturedList();
+    renderFeatured();
 }
 
-function renderCartModal() {
-  if (cart.length === 0) {
-    cartItemsList.innerHTML = `<div class="empty-cart">🛒 ጋሪዎ ባዶ ነው</div>`;
-    cartTotal.textContent = 'ጠቅላላ፦ 0 ብር';
-    return;
-  }
-  let html = '', total = 0;
-  cart.forEach(item => {
-    const subtotal = item.price * item.quantity;
-    total += subtotal;
-    html += `
-      <div class="cart-item">
-        <div class="item-info"><strong>${item.name}</strong><small>${item.price.toLocaleString()} ብር × ${item.quantity}</small></div>
-        <div class="qty-control">
-          <button onclick="changeQty(${item.id}, -1)">−</button>
-          <span style="min-width:24px;text-align:center;">${item.quantity}</span>
-          <button onclick="changeQty(${item.id}, 1)">+</button>
-          <button class="danger" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
-        </div>
-      </div>
-    `;
-  });
-  cartItemsList.innerHTML = html;
-  cartTotal.textContent = `ጠቅላላ፦ ${total.toLocaleString()} ብር`;
+addFeaturedBtn.addEventListener('click', function() {
+    const name = featuredName.value.trim();
+    const price = parseFloat(featuredPrice.value);
+    const image = featuredImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/400/300';
+    const desc = featuredDesc.value.trim();
+    if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
+    if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
+    featuredItems.push({ name, price, image, desc });
+    localStorage.setItem('awashFeatured', JSON.stringify(featuredItems));
+    featuredName.value = '';
+    featuredPrice.value = '';
+    featuredImage.value = '';
+    featuredDesc.value = '';
+    renderFeaturedList();
+    renderFeatured();
+    alert(`✅ "${name}" ወቅታዊ እቃ ተጨምሯል!`);
+});
+
+// ============================================================
+// ጂፒኤስ
+// ============================================================
+getLocationBtn.addEventListener('click', function() {
+    if (!navigator.geolocation) {
+        locationStatus.textContent = '❌ ጂፒኤስ አይደግፍም';
+        locationStatus.className = 'location-status error';
+        return;
+    }
+    locationStatus.textContent = '⏳ ቦታ እየተፈለገ...';
+    locationStatus.className = 'location-status';
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            custLat.value = pos.coords.latitude;
+            custLng.value = pos.coords.longitude;
+            locationStatus.innerHTML =
+                `✅ ቦታ ተመዝግቧል! <a href="https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}" target="_blank">(እዚህ)</a>`;
+            locationStatus.className = 'location-status success';
+        },
+        (err) => {
+            let msg = '❌ ቦታ አልተገኘም ';
+            if (err.code === 1) msg += 'ፍቃድ ይስጡ!';
+            else if (err.code === 2) msg += 'ምልክት የለም';
+            else msg += 'ዳግም ይሞክሩ';
+            locationStatus.textContent = msg;
+            locationStatus.className = 'location-status error';
+        }, { enableHighAccuracy: true, timeout: 15000 }
+    );
+});
+
+// ============================================================
+// ፍለጋ
+// ============================================================
+searchInput.addEventListener('input', function() {
+    renderProducts(currentCategory, this.value);
+});
+
+// ============================================================
+// ሳይድ ሜኑ
+// ============================================================
+function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
 }
 
-function openCartModal() { renderCartModal(); cartModal.classList.add('active'); }
-function closeCartModal() { cartModal.classList.remove('active'); }
-cartIconBtn.addEventListener('click', openCartModal);
-closeCartBtn.addEventListener('click', closeCartModal);
-cartModal.addEventListener('click', (e) => { if (e.target === cartModal) closeCartModal(); });
+function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+}
 
-// ======================== ፍለጋ ========================
-searchInput.addEventListener('input', function() { renderProducts(currentCategory, this.value); });
-
-// ======================== ሳይድ ሜኑ ========================
-function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); }
-function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
 hamburgerBtn.addEventListener('click', openSidebar);
 closeSidebarBtn.addEventListener('click', closeSidebar);
 overlay.addEventListener('click', closeSidebar);
 
-// ======================== ቼክአውት ========================
+// ============================================================
+// ቼክአውት
+// ============================================================
 checkoutBtn.addEventListener('click', function() {
-  if (cart.length === 0) { alert('እባክዎ መጀመሪያ እቃዎችን ወደ ጋሪ ይጨምሩ!'); return; }
-  checkoutFormModal.classList.add('active');
-  custName.value = ''; custPhone.value = ''; custAddress.value = ''; receiptFile.value = '';
-  populatePaymentAccounts();
-});
-
-cancelFormBtn.addEventListener('click', function() { checkoutFormModal.classList.remove('active'); });
-
-// ======================== ቼክአውት መላክ (ከአካውንት መምረጫ ጋር) ========================
-checkoutForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  const name = custName.value.trim();
-  const phone = custPhone.value.trim();
-  const address = custAddress.value.trim();
-  const file = receiptFile.files[0];
-  const lat = custLat.value.trim();
-  const lng = custLng.value.trim();
-  const accountId = parseInt(paymentAccountSelect.value);
-
-  if (!file) { alert('⚠️ የክፍያ ደረሰኝ (screenshot) ያስገቡ!'); return; }
-  if (!name || !phone || !address) { alert('ሁሉንም መስኮች ይሙሉ!'); return; }
-  if (!accountId) { alert('እባክዎ ለክፍያ የሚፈልጉትን አካውንት ይምረጡ!'); return; }
-
-  const accounts = getBankAccounts();
-  const selectedAccount = accounts.find(a => a.id === accountId);
-  if (!selectedAccount) { alert('የተመረጠው አካውንት አልተገኘም!'); return; }
-
-  // የትዕዛዝ ዝርዝር አዘጋጅ
-  let orderDetails = '🛍️ አዋሽ ኦንላይን ገበያ - አዲስ ትዕዛዝ%0A';
-  orderDetails += `👤 ስም፦ ${name}%0A📞 ስልክ፦ ${phone}%0A📍 አድራሻ፦ ${address}%0A`;
-  if (lat && lng) { orderDetails += `🗺️ ቦታ፦ https://www.google.com/maps?q=${lat},${lng}%0A`; }
-  orderDetails += `🏦 ክፍያ ወደ፦ ${selectedAccount.bank} - ${selectedAccount.account} (${selectedAccount.holder})%0A`;
-  orderDetails += '%0A📦 የተገዙ እቃዎች፦%0A';
-  let total = 0;
-  let itemsList = [];
-  cart.forEach(item => {
-    const subtotal = item.price * item.quantity;
-    total += subtotal;
-    orderDetails += `▪️ ${item.name}  x${item.quantity}  = ${subtotal.toLocaleString()} ብር%0A`;
-    itemsList.push({ name: item.name, qty: item.quantity, price: item.price, subtotal: subtotal });
-  });
-  orderDetails += `%0A💰 ጠቅላላ፦ ${total.toLocaleString()} ብር`;
-  orderDetails += `%0A%0A📎 ደረሰኝ (screenshot) ከዚህ በታች ተያይዟል።`;
-
-  const sendToTelegram = function() {
-    if (BOT_TOKEN === 'YOUR_BOT_TOKEN' || CHAT_ID === 'YOUR_CHAT_ID') {
-      showReceipt(name, phone, address, itemsList, total, selectedAccount);
-      return Promise.resolve();
+    if (cart.length === 0) {
+        alert('እባክዎ መጀመሪያ እቃዎችን ወደ ጋሪ ይጨምሩ!');
+        return;
     }
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = function() {
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: CHAT_ID, text: orderDetails })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (!data.ok) throw new Error(data.description);
-          const formData = new FormData();
-          formData.append('chat_id', CHAT_ID);
-          formData.append('document', file, file.name);
-          formData.append('caption', '📎 የክፍያ ደረሰኝ');
-          return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: formData });
-        })
-        .then(res => res.json())
-        .then(fileData => {
-          if (!fileData.ok) throw new Error(fileData.description);
-          resolve();
-        })
-        .catch(err => { reject(err); });
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const showReceipt = function(name, phone, address, items, total, account) {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('am-ET', { 
-      year: 'numeric', month: 'long', day: 'numeric',
-      hour: '2-digit', minute: '2-digit', second: '2-digit'
-    });
-    
-    let itemsHtml = '';
-    items.forEach(item => {
-      itemsHtml += `
-        <div class="item">
-          <span>${item.name} × ${item.qty}</span>
-          <span>${item.subtotal.toLocaleString()} ብር</span>
-        </div>
-      `;
-    });
-
-    receiptContent.innerHTML = `
-      <div class="receipt-row">
-        <span class="label">👤 ገዢ</span>
-        <span class="value">${name}</span>
-      </div>
-      <div class="receipt-row">
-        <span class="label">📞 ስልክ</span>
-        <span class="value">${phone}</span>
-      </div>
-      <div class="receipt-row">
-        <span class="label">📍 አድራሻ</span>
-        <span class="value">${address}</span>
-      </div>
-      <div class="receipt-row">
-        <span class="label">🏦 የክፍያ አካውንት</span>
-        <span class="value">${account.bank} - ${account.account} (${account.holder})</span>
-      </div>
-      <div class="receipt-items">
-        <div style="font-weight:600; color:#0b2b4f; margin-bottom:4px;">🛒 የተገዙ እቃዎች</div>
-        ${itemsHtml}
-      </div>
-      <div class="receipt-total">
-        💰 ጠቅላላ፦ ${total.toLocaleString()} ብር
-      </div>
-      <div class="receipt-row">
-        <span class="label">📅 ቀን እና ሰዓት</span>
-        <span class="value">${dateStr}</span>
-      </div>
-    `;
-    receiptModal.classList.add('active');
-  };
-
-  sendToTelegram()
-    .then(() => {
-      cart = []; saveCart(); updateBadge(); closeCartModal();
-      checkoutFormModal.classList.remove('active');
-      showReceipt(name, phone, address, itemsList, total, selectedAccount);
-    })
-    .catch(err => {
-      alert('❌ ስህተት፦ ' + err.message);
-    });
+    checkoutFormModal.classList.add('active');
+    custName.value = '';
+    custPhone.value = '';
+    custAddress.value = '';
+    receiptFile.value = '';
+    populatePaymentAccounts();
 });
 
-// ======================== የደረሰኝ መዝጊያ ========================
+cancelFormBtn.addEventListener('click', function() {
+    checkoutFormModal.classList.remove('active');
+});
+
+// ============================================================
+// ቼክአውት መላክ (ወደ Appwrite እና ቴሌግራም)
+// ============================================================
+checkoutForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name = custName.value.trim();
+    const phone = custPhone.value.trim();
+    const address = custAddress.value.trim();
+    const file = receiptFile.files[0];
+    const lat = custLat.value.trim();
+    const lng = custLng.value.trim();
+    const accountId = paymentAccountSelect.value;
+
+    if (!file) {
+        alert('⚠️ የክፍያ ደረሰኝ (screenshot) ያስገቡ!');
+        return;
+    }
+    if (!name || !phone || !address) {
+        alert('ሁሉንም መስኮች ይሙሉ!');
+        return;
+    }
+    if (!accountId) {
+        alert('እባክዎ ለክፍያ የሚፈልጉትን አካውንት ይምረጡ!');
+        return;
+    }
+
+    const selectedAccount = bankAccounts.find(a => a.id === accountId);
+    if (!selectedAccount) {
+        alert('የተመረጠው አካውንት አልተገኘም!');
+        return;
+    }
+
+    // የትዕዛዝ ዝርዝር አዘጋጅ
+    let itemsList = [];
+    let total = 0;
+    cart.forEach(item => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        itemsList.push({
+            name: item.name,
+            qty: item.quantity,
+            price: item.price,
+            subtotal: subtotal
+        });
+    });
+
+    const orderData = {
+        name,
+        phone,
+        address,
+        items: itemsList,
+        total,
+        paymentAccount: selectedAccount.bank + ' - ' + selectedAccount.account + ' (' + selectedAccount.holder + ')'
+    };
+
+    try {
+        // 1. ትዕዛዙን በAppwrite ውስጥ አስቀምጥ
+        await saveOrderToAppwrite(orderData);
+
+        // 2. ወደ ቴሌግራም ላክ (ካዋቀርክ)
+        if (BOT_TOKEN !== '8892108715:AAFEIeFxGEsw-I0m7QSkYOP3-ZNaDZ4yBqk' && CHAT_ID !== '6331737160') {
+            let orderDetails = '🛍️ አዋሽ ኦንላይን ገበያ - አዲስ ትዕዛዝ%0A';
+            orderDetails += `👤 ስም፦ ${name}%0A📞 ስልክ፦ ${phone}%0A📍 አድራሻ፦ ${address}%0A`;
+            if (lat && lng) {
+                orderDetails += `🗺️ ቦታ፦ https://www.google.com/maps?q=${lat},${lng}%0A`;
+            }
+            orderDetails += `🏦 ክፍያ ወደ፦ ${selectedAccount.bank} - ${selectedAccount.account} (${selectedAccount.holder})%0A`;
+            orderDetails += '%0A📦 የተገዙ እቃዎች፦%0A';
+            itemsList.forEach(item => {
+                orderDetails += `▪️ ${item.name}  x${item.qty}  = ${item.subtotal.toLocaleString()} ብር%0A`;
+            });
+            orderDetails += `%0A💰 ጠቅላላ፦ ${total.toLocaleString()} ብር`;
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: orderDetails })
+                }).then(res => res.json()).then(data => {
+                    if (data.ok) {
+                        const formData = new FormData();
+                        formData.append('chat_id', CHAT_ID);
+                        formData.append('document', file, file.name);
+                        formData.append('caption', '📎 የክፍያ ደረሰኝ');
+                        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                    }
+                }).catch(() => {});
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 3. ደረሰኝ አሳይ
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('am-ET', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        let itemsHtml = '';
+        itemsList.forEach(item => {
+            itemsHtml += `
+                <div class="item">
+                    <span>${item.name} × ${item.qty}</span>
+                    <span>${item.subtotal.toLocaleString()} ብር</span>
+                </div>
+            `;
+        });
+
+        receiptContent.innerHTML = `
+            <div class="receipt-row">
+                <span class="label">👤 ገዢ</span>
+                <span class="value">${name}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">📞 ስልክ</span>
+                <span class="value">${phone}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">📍 አድራሻ</span>
+                <span class="value">${address}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">🏦 የክፍያ አካውንት</span>
+                <span class="value">${selectedAccount.bank} - ${selectedAccount.account}</span>
+            </div>
+            <div class="receipt-items">
+                <div style="font-weight:600; color:#0b2b4f; margin-bottom:4px;">🛒 የተገዙ እቃዎች</div>
+                ${itemsHtml}
+            </div>
+            <div class="receipt-total">
+                💰 ጠቅላላ፦ ${total.toLocaleString()} ብር
+            </div>
+            <div class="receipt-row">
+                <span class="label">📅 ቀን እና ሰዓት</span>
+                <span class="value">${dateStr}</span>
+            </div>
+        `;
+
+        // 4. ጋሪ አጽዳ
+        cart = [];
+        saveCart();
+        updateBadge();
+        closeCartModal();
+        checkoutFormModal.classList.remove('active');
+        receiptModal.classList.add('active');
+
+    } catch (error) {
+        alert('❌ ስህተት፦ ' + error.message);
+    }
+});
+
 receiptCloseBtn.addEventListener('click', function() {
-  receiptModal.classList.remove('active');
+    receiptModal.classList.remove('active');
 });
 receiptModal.addEventListener('click', function(e) {
-  if (e.target === receiptModal) receiptModal.classList.remove('active');
+    if (e.target === receiptModal) receiptModal.classList.remove('active');
 });
 
-// ======================== መጀመሪያ ========================
-function init() {
-  checkAdminVisibility();
-  renderCategories();
-  renderFeatured();
-  renderProducts('ሁሉም', '');
-  updateBadge();
-  populatePaymentAccounts();
-  renderBankAccounts();
+// ============================================================
+// መጀመሪያ
+// ============================================================
+async function init() {
+    checkAdminVisibility();
+    await loadAllData();
+    renderFeaturedList();
+    renderBankAccounts();
+    updateBadge();
 }
+
 init();
-console.log('🚀 Awash Online Gebeya ተጀምሯል! (አካውንት መጨመሪያ ተጨምሯል)');
+console.log('🚀 Awash Online Gebeya ተጀምሯል! (ከAppwrite ጋር)');
 </script>
 </body>
 </html>
