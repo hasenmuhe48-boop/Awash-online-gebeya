@@ -28,13 +28,14 @@
     .header-title small { font-size:13px; font-weight:400; opacity:0.85; display:block; }
     .header-right { display:flex; align-items:center; gap:12px; }
     
-    /* ===== ማርሽ አዝራሩ ሁልጊዜ ይታያል ===== */
+    /* ===== ማርሽ አዝራሩ በነባር ተደብቋል ===== */
     .admin-btn {
       background:rgba(255,255,255,0.15); border:none; color:white;
       padding:8px 14px; border-radius:30px; cursor:pointer;
       font-size:18px; transition:0.2s;
-      display:block !important;
+      display:none !important;
     }
+    .admin-btn.visible { display:block !important; }
     .admin-btn:hover { background:rgba(255,255,255,0.25); transform:scale(1.05); }
     .header-contact { font-size:14px; background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:30px; display:flex; align-items:center; gap:8px; }
 
@@ -611,9 +612,10 @@
 <div class="admin-modal" id="adminModal">
   <div class="admin-content">
     <button class="admin-close" id="adminCloseBtn">&times;</button>
-    <h2>⚙️ ሙሉ የአፕ አስተዳደር</h2>
-    <p class="admin-sub">ሁሉንም የመደብሩን ነገሮች ከዚህ ይቆጣጠሩ</p>
+    <h2>⚙️ የአስተዳዳሪ ፓነል</h2>
+    <p class="admin-sub">አዳዲስ ካታጎሪ እና እቃዎችን በቀላሉ ይጨምሩ</p>
 
+    <!-- ===== ፓስዎርድ መግቢያ (በነባር ይታያል) ===== -->
     <div class="admin-password-input" id="adminLoginSection">
       <label>🔑 ፓስዎርድ ያስገቡ</label>
       <input type="password" id="adminPassword" placeholder="ፓስዎርድ ያስገቡ..." />
@@ -621,8 +623,10 @@
       <p class="text-sm" style="margin-top:4px;">ነባር ፓስዎርድ: <strong>admin123</strong> (በመጀመሪያ ጊዜ)</p>
     </div>
 
+    <!-- ===== የአስተዳዳሪ ይዘት (በነባር ተደብቋል) ===== -->
     <div id="adminContent" style="display:none;">
-      <!-- ፓስዎርድ መቀየር -->
+
+      <!-- 1. ፓስዎርድ መቀየር -->
       <div class="admin-section">
         <h3>🔑 ፓስዎርድ ቀይር</h3>
         <div class="admin-flex">
@@ -631,7 +635,7 @@
         </div>
       </div>
 
-      <!-- የክፍያ አካውንቶች -->
+      <!-- 2. የባንክ አካውንቶች -->
       <div class="admin-section" style="border:2px solid #0b2b4f; background:#e8f0fe;">
         <h3>🏦 የክፍያ አካውንቶች መቀየር/መጨመር</h3>
         <p class="text-sm">ከCBE በተጨማሪ ሌሎች የባንክ አካውንቶችን ይጨምሩ</p>
@@ -645,7 +649,7 @@
         <p class="text-sm mt-8" id="bankAccountStatus"></p>
       </div>
 
-      <!-- ካታጎሪ -->
+      <!-- 3. ካታጎሪ -->
       <div class="admin-section">
         <h3>📂 አዲስ ካታጎሪ ጨምር</h3>
         <div class="admin-flex">
@@ -655,7 +659,7 @@
         <div id="categoryList" class="mt-8"></div>
       </div>
 
-      <!-- አዲስ እቃ -->
+      <!-- 4. አዲስ እቃ -->
       <div class="admin-section">
         <h3>🛒 አዲስ እቃ ጨምር</h3>
         <div class="admin-grid-2">
@@ -671,7 +675,7 @@
         <div id="productList" class="mt-8" style="max-height:200px; overflow-y:auto;"></div>
       </div>
 
-      <!-- ወቅታዊ እቃዎች -->
+      <!-- 5. ወቅታዊ እቃዎች -->
       <div class="admin-section">
         <h3>⚡ ወቅታዊ እቃዎች መቀየር</h3>
         <div class="admin-flex mt-8">
@@ -684,7 +688,7 @@
         <div id="featuredList" class="mt-8"></div>
       </div>
 
-      <!-- እቃ ማስተካከል -->
+      <!-- 6. እቃ ማስተካከል -->
       <div class="admin-section" style="border:2px solid #0b2b4f; background:#e8f0fe;">
         <h3>✏️ እቃ ማስተካከል</h3>
         <div class="admin-grid-2 mt-8">
@@ -758,7 +762,7 @@ const CHAT_ID = '6331737160';
 // ============================================================
 // ሚስጥራዊ ቁልፍ እና ፓስዎርድ
 // ============================================================
-const ADMIN_SHOW_KEY = 'mysecret123';
+const ADMIN_SHOW_KEY = 'mysecret';
 
 function getAdminPassword() {
     const stored = localStorage.getItem('awashAdminPassword');
@@ -800,7 +804,7 @@ function getDefaultBankAccounts() {
 }
 
 // ============================================================
-// 📥 ውሂብ መጫኛ ተግባራት (ከAppwrite ወይም LocalStorage)
+// 📥 ውሂብ መጫኛ ተግባራት
 // ============================================================
 async function loadProducts() {
     if (appwriteConnected) {
@@ -820,7 +824,6 @@ async function loadProducts() {
             console.warn('⚠️ ከAppwrite ምርቶችን ማግኘት አልተቻለም፣ LocalStorage ን እንጠቀማለን:', error);
         }
     }
-    // LocalStorage መመለስ
     const stored = localStorage.getItem('awashProducts');
     if (stored) {
         try { return JSON.parse(stored); }
@@ -874,7 +877,7 @@ async function loadBankAccounts() {
 }
 
 // ============================================================
-// 💾 ውሂብ ማስቀመጫ ተግባራት (ወደ Appwrite እና LocalStorage)
+// 💾 ውሂብ ማስቀመጫ ተግባራት
 // ============================================================
 async function saveProductToAppwrite(name, price, category, image, description) {
     if (appwriteConnected) {
@@ -890,7 +893,6 @@ async function saveProductToAppwrite(name, price, category, image, description) 
             console.warn('⚠️ ወደ Appwrite ምርት ማስቀመጥ አልተቻለም፣ LocalStorage ላይ እናስቀምጣለን:', error);
         }
     }
-    // LocalStorage ላይ አስቀምጥ
     const products = JSON.parse(localStorage.getItem('awashProducts') || JSON.stringify(getDefaultProducts()));
     const newId = 'local_' + Date.now();
     products.push({ id: newId, name, price, category, image, description });
@@ -912,7 +914,6 @@ async function updateProductInAppwrite(docId, name, price, category, image, desc
             console.warn('⚠️ በAppwrite ምርት ማስተካከል አልተቻለም፣ LocalStorage ላይ እናስተካክላለን:', error);
         }
     }
-    // LocalStorage ላይ አስተካክል
     const products = JSON.parse(localStorage.getItem('awashProducts') || JSON.stringify(getDefaultProducts()));
     const index = products.findIndex(p => p.id === docId);
     if (index !== -1) {
@@ -1125,17 +1126,14 @@ async function loadAllData() {
             </div>
         `;
         
-        // ምርቶችን፣ ካታጎሪዎችን እና የባንክ አካውንቶችን ጫን
         products = await loadProducts();
         categories = await loadCategories();
         bankAccounts = await loadBankAccounts();
         
-        // ውሂብ በLocalStorage ውስጥ አስቀምጥ (ለቀጣይ መመለስ)
         localStorage.setItem('awashProducts', JSON.stringify(products));
         localStorage.setItem('awashCategories', JSON.stringify(categories));
         localStorage.setItem('awashBankAccounts', JSON.stringify(bankAccounts));
         
-        // ገጹን አዘምን
         renderCategories();
         renderProducts();
         renderFeatured();
@@ -1159,10 +1157,25 @@ async function loadAllData() {
 }
 
 // ============================================================
+// ማርሽ አዝራሩ በURL ላይ በሚስጥር ቃል ብቻ እንዲታይ
+// ============================================================
+function checkAdminVisibility() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin');
+    const adminBtn = document.getElementById('adminOpenBtn');
+    if (adminParam === ADMIN_SHOW_KEY) {
+        adminBtn.classList.add('visible');
+        console.log('✅ የአስተዳዳሪ አዝራር ታይቷል!');
+    } else {
+        adminBtn.classList.remove('visible');
+        console.log('🔒 የአስተዳዳሪ አዝራር ተደብቋል');
+    }
+}
+
+// ============================================================
 // ማሳያ ተግባራት
 // ============================================================
 function renderCategories() {
-    // Sidebar
     sidebarCategoryList.innerHTML = '';
     categories.forEach(cat => {
         const li = document.createElement('li');
@@ -1170,7 +1183,6 @@ function renderCategories() {
         li.addEventListener('click', () => { setCategory(cat); closeSidebar(); });
         sidebarCategoryList.appendChild(li);
     });
-    // Strip
     categoryStrip.innerHTML = '';
     categories.forEach(cat => {
         const span = document.createElement('span');
@@ -1429,10 +1441,11 @@ paymentAccountSelect.addEventListener('change', function() {
 });
 
 // ============================================================
-// የአስተዳዳሪ ፓነል ተግባራት (ከAppwrite እና LocalStorage ጋር)
+// የአስተዳዳሪ ፓነል ተግባራት
 // ============================================================
 adminOpenBtn.addEventListener('click', () => {
     adminModal.classList.add('active');
+    // ፓስዎርድ መግቢያ እንዲታይ እና ይዘቱ እንዲደበቅ
     adminLoginSection.style.display = 'block';
     adminContent.style.display = 'none';
     adminPassword.value = '';
@@ -1457,6 +1470,7 @@ adminLoginBtn.addEventListener('click', () => {
     const pass = adminPassword.value.trim();
     if (verifyAdminPassword(pass)) {
         isAdminLoggedIn = true;
+        // ፓስዎርድ መግቢያ ደብቅ እና ይዘቱ አሳይ
         adminLoginSection.style.display = 'none';
         adminContent.style.display = 'block';
         renderBankAccounts();
@@ -1831,9 +1845,7 @@ checkoutForm.addEventListener('submit', async function(e) {
         });
     });
 
-    // ትዕዛዙን ወደ Appwrite እና ቴሌግራም ላክ
     try {
-        // Appwrite ላይ አስቀምጥ
         if (appwriteConnected) {
             try {
                 await databases.createDocument(
@@ -1856,7 +1868,6 @@ checkoutForm.addEventListener('submit', async function(e) {
             }
         }
 
-        // ቴሌግራም ላክ
         if (BOT_TOKEN !== 'YOUR_BOT_TOKEN' && CHAT_ID !== 'YOUR_CHAT_ID') {
             let orderDetails = '🛍️ አዋሽ ኦንላይን ገበያ - አዲስ ትዕዛዝ%0A';
             orderDetails += `👤 ስም፦ ${name}%0A📞 ስልክ፦ ${phone}%0A📍 አድራሻ፦ ${address}%0A`;
@@ -1892,7 +1903,6 @@ checkoutForm.addEventListener('submit', async function(e) {
             reader.readAsDataURL(file);
         }
 
-        // ደረሰኝ አሳይ
         const now = new Date();
         const dateStr = now.toLocaleDateString('am-ET', {
             year: 'numeric',
@@ -1966,11 +1976,11 @@ receiptModal.addEventListener('click', function(e) {
 // መጀመሪያ
 // ============================================================
 async function init() {
+    checkAdminVisibility();
     await loadAllData();
     renderFeaturedList();
     renderBankAccounts();
     updateBadge();
-    // የተቀመጠውን የባንክ አካውንት አሳይ
     if (bankAccounts.length > 0) {
         updatePaymentDisplay(bankAccounts[0]);
         paymentAccountSelect.value = bankAccounts[0].id;
@@ -1978,7 +1988,7 @@ async function init() {
 }
 
 init();
-console.log('🚀 Awash Online Gebeya ተጀምሯል! (ከAppwrite + LocalStorage Fallback)');
+console.log('🚀 Awash Online Gebeya ተጀምሯል! (ማርሽ አዝራር በURL ብቻ)');
 </script>
 </body>
 </html>
