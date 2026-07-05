@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Awash Online Gebeya</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <meta name="google-site-verification" content="NgLrwC38Naww8X6sj11WuLG4PwBx37ZzWZEmyrYMbY4" />
+  
   <style>
-    /* ===== መሰረታዊ ቅጥ ===== */
+    /* ===== መሰረታዊ ቅጥ (እንደበፊቱ) ===== */
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
     body { background:#f8fafc; padding:0 16px 40px; }
 
@@ -154,7 +154,7 @@
       margin:28px 0 12px; border-left:5px solid #f59e0b; padding-left:14px;
     }
 
-    /* ===== የምርት ዝርዝር መስኮት (Product Detail Modal) ===== */
+    /* ===== የምርት ዝርዝር መስኮት ===== */
     .product-detail-modal {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
@@ -240,7 +240,7 @@
     .cart-actions .checkout-btn:hover { background:#1e3a5f; }
     .empty-cart { text-align:center; padding:30px 0; color:#64748b; }
 
-    /* የደንበኛ ፎርም */
+    /* የደንበኛ ፎርም (አካውንት መምረጫ ተጨምሯል) */
     .form-modal {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
@@ -283,12 +283,16 @@
     .location-status { font-size:13px; color:#475569; margin-top:4px; padding:8px 12px; background:#f1f5f9; border-radius:20px; text-align:center; }
     .location-status.success { background:#dcfce7; color:#166534; }
     .location-status.error { background:#fee2e2; color:#991b1b; }
+    
+    /* የክፍያ አካውንት ማሳያ */
     .form-content .payment-info {
       background:#f0fdf4; border:2px solid #bbf7d0; border-radius:16px;
       padding:14px; margin:14px 0 12px; text-align:center;
     }
     .form-content .payment-info p { font-size:15px; color:#065f46; font-weight:500; }
     .form-content .payment-info .account { font-size:18px; font-weight:700; color:#0b2b4f; }
+    .form-content .payment-info .account-name { font-size:14px; color:#0b2b4f; }
+    .form-content .payment-info .bank-label { font-size:13px; color:#64748b; }
     .form-content .extra-info {
       background:#fef3c7; border:2px solid #fcd34d; border-radius:16px;
       padding:12px; margin:12px 0 16px; text-align:center;
@@ -367,7 +371,7 @@
       font-size:12px; font-weight:700; display:inline-block;
     }
 
-    /* የአስተዳዳሪ ፓነል */
+    /* የአስተዳዳሪ ፓነል (አካውንት መጨመሪያ ተጨምሯል) */
     .admin-modal {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
@@ -431,6 +435,7 @@
     .mt-12 { margin-top:12px; }
     .text-center { text-align:center; }
     .text-sm { font-size:12px; color:#64748b; }
+    .text-success { color:#16a34a; font-weight:600; }
 
     @media (max-width:640px) {
       .header-title { font-size:16px; }
@@ -503,7 +508,7 @@
 <h2 class="section-title" id="activeCategoryTitle">ሁሉም እቃዎች</h2>
 <div class="products-grid" id="productGrid"></div>
 
-<!-- ====== የምርት ዝርዝር መስኮት (Product Detail Modal) ====== -->
+<!-- ====== የምርት ዝርዝር መስኮት ====== -->
 <div class="product-detail-modal" id="productDetailModal">
   <div class="product-detail-content">
     <button class="detail-close" id="detailCloseBtn">✕</button>
@@ -533,7 +538,7 @@
   </div>
 </div>
 
-<!-- ====== የደንበኛ ፎርም ====== -->
+<!-- ====== የደንበኛ ፎርም (አካውንት መምረጫ ተጨምሯል) ====== -->
 <div class="form-modal" id="checkoutFormModal">
   <div class="form-content">
     <h2>📋 የደንበኛ መረጃ ይሙሉ</h2>
@@ -555,11 +560,20 @@
       <div class="file-upload">
         <input type="file" id="receiptFile" accept="image/*" />
       </div>
+      
+      <!-- ===== የክፍያ አካውንት መምረጫ ===== -->
+      <label>🏦 ለክፍያ የሚፈልጉትን አካውንት ይምረጡ</label>
+      <select id="paymentAccountSelect" required style="width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:40px; font-size:15px; outline:none; background:white;">
+        <option value="">-- አካውንት ይምረጡ --</option>
+      </select>
+      
       <div class="payment-info" id="paymentInfoDisplay">
         <p>💳 ክፍያ ወደዚህ አካውንት ያስገቡ፦</p>
         <div class="account" id="bankAccountDisplay">CBE: 1000743235561</div>
-        <div style="font-size:14px; color:#0b2b4f;" id="bankNameDisplay">ስም፡ Hassen Mehamed</div>
+        <div class="account-name" id="bankNameDisplay">ስም፡ Hassen Mehamed</div>
+        <div class="bank-label" id="bankLabelDisplay">ባንክ፡ CBE</div>
       </div>
+      
       <div class="extra-info">
         📌 <strong>ደረሰኙን ይላኩ</strong> ለተጨማሪ መረጃ <strong>+251944530534</strong> ይደውሉ
       </div>
@@ -594,7 +608,7 @@
   </div>
 </div>
 
-<!-- ====== የአስተዳዳሪ ፓነል ====== -->
+<!-- ====== የአስተዳዳሪ ፓነል (አካውንት መጨመሪያ ተጨምሯል) ====== -->
 <div class="admin-modal" id="adminModal">
   <div class="admin-content">
     <button class="admin-close" id="adminCloseBtn">&times;</button>
@@ -610,6 +624,7 @@
 
     <div id="adminContent" style="display:none;">
 
+      <!-- 1. ፓስዎርድ መቀየር -->
       <div class="admin-section">
         <h3>🔑 ፓስዎርድ ቀይር</h3>
         <div class="admin-flex">
@@ -618,16 +633,21 @@
         </div>
       </div>
 
-      <div class="admin-section">
-        <h3>🏦 የባንክ አካውንት መቀየር</h3>
-        <div class="admin-grid-2">
-          <input type="text" id="bankAccountInput" placeholder="የባንክ አካውንት ቁጥር..." />
-          <input type="text" id="bankNameInput" placeholder="የባንክ ባለቤት ስም..." />
+      <!-- 2. የክፍያ አካውንቶች መቀየር/መጨመር (አዲስ) -->
+      <div class="admin-section" style="border:2px solid #0b2b4f; background:#e8f0fe;">
+        <h3>🏦 የክፍያ አካውንቶች መቀየር/መጨመር</h3>
+        <p class="text-sm">ከCBE በተጨማሪ ሌሎች የባንክ አካውንቶችን ይጨምሩ</p>
+        <div class="admin-flex mt-8">
+          <input type="text" id="newBankName" placeholder="የባንክ ስም (ለምሳሌ: CBE, Awash, Dashen...)..." style="flex:1.5;" />
+          <input type="text" id="newBankAccount" placeholder="የአካውንት ቁጥር..." style="flex:1.5;" />
+          <input type="text" id="newBankHolder" placeholder="የባንክ ባለቤት ስም..." style="flex:1.5;" />
         </div>
-        <button class="admin-btn-submit mt-8" id="updateBankBtn">💾 አስቀምጥ</button>
-        <p class="text-sm mt-8" id="bankStatus"></p>
+        <button class="admin-btn-submit mt-8" id="addBankAccountBtn">➕ አካውንት ጨምር</button>
+        <div id="bankAccountList" class="mt-8"></div>
+        <p class="text-sm mt-8" id="bankAccountStatus"></p>
       </div>
 
+      <!-- 3. አዲስ ካታጎሪ መጨመር -->
       <div class="admin-section">
         <h3>📂 አዲስ ካታጎሪ ጨምር</h3>
         <div class="admin-flex">
@@ -637,6 +657,7 @@
         <div id="categoryList" class="mt-8"></div>
       </div>
 
+      <!-- 4. አዲስ እቃ መጨመር -->
       <div class="admin-section">
         <h3>🛒 አዲስ እቃ ጨምር</h3>
         <div class="admin-grid-2">
@@ -652,6 +673,7 @@
         <div id="productList" class="mt-8" style="max-height:200px; overflow-y:auto;"></div>
       </div>
 
+      <!-- 5. ወቅታዊ እቃዎች መቀየር -->
       <div class="admin-section">
         <h3>⚡ ወቅታዊ እቃዎች መቀየር</h3>
         <p class="text-sm">ወቅታዊ እቃዎችን ከዚህ ይጨምሩ/ያስወግዱ</p>
@@ -665,21 +687,31 @@
         <div id="featuredList" class="mt-8"></div>
       </div>
 
-      <div class="admin-section">
+      <!-- 6. እቃ ማስተካከል -->
+      <div class="admin-section" style="border:2px solid #0b2b4f; background:#e8f0fe;">
         <h3>✏️ እቃ ማስተካከል</h3>
         <p class="text-sm">ከታች ያለውን እቃ ምረጥ እና አዲስ መረጃ አስገባ</p>
+        
         <div class="admin-grid-2 mt-8">
-          <select id="editProductSelect"></select>
+          <select id="editProductSelect" style="grid-column:1/3;"></select>
+        </div>
+        
+        <div class="admin-grid-2 mt-8">
           <input type="text" id="editProductName" placeholder="አዲስ ስም..." />
           <input type="number" id="editProductPrice" placeholder="አዲስ ዋጋ..." />
           <select id="editProductCategory"></select>
           <input type="text" id="editProductImage" placeholder="አዲስ የምስል URL..." />
         </div>
+        
         <div class="admin-flex mt-8">
           <textarea id="editProductDesc" placeholder="አዲስ መግለጫ..." rows="2"></textarea>
         </div>
-        <button class="admin-btn-submit mt-8" id="editProductBtn">💾 አስተካክል</button>
-        <p class="text-sm mt-8" id="editStatus"></p>
+        
+        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+          <button class="admin-btn-submit" id="editProductBtn">💾 አስተካክል</button>
+          <button class="admin-btn-warning" id="editClearBtn" style="background:#e5e7eb; color:#1e293b;">🔄 አጽዳ</button>
+        </div>
+        <p class="text-sm mt-8" id="editStatus" style="color:#2563eb;"></p>
       </div>
 
       <div class="text-center text-sm" style="border-top:1px solid #e5e7eb; padding-top:12px;">
@@ -713,21 +745,81 @@ function changeAdminPassword(newPass) {
     return true;
 }
 
-// ======================== የባንክ መረጃ ========================
-function getBankData() {
-    const stored = localStorage.getItem('awashBankData');
+// ======================== የባንክ አካውንቶች አስተዳደር ========================
+function getBankAccounts() {
+    const stored = localStorage.getItem('awashBankAccounts');
     if (stored) {
         try { return JSON.parse(stored); }
-        catch { return { account: '1000743235561', name: 'Hassen Mehamed' }; }
+        catch { return getDefaultBankAccounts(); }
     }
-    const def = { account: '1000743235561', name: 'Hassen Mehamed' };
-    localStorage.setItem('awashBankData', JSON.stringify(def));
+    return getDefaultBankAccounts();
+}
+
+function getDefaultBankAccounts() {
+    const def = [
+        { id: 1, bank: 'CBE', account: '1000743235561', holder: 'Hassen Mehamed' }
+    ];
+    localStorage.setItem('awashBankAccounts', JSON.stringify(def));
     return def;
 }
-function saveBankData(account, name) {
-    const data = { account, name };
-    localStorage.setItem('awashBankData', JSON.stringify(data));
+
+function saveBankAccounts(accounts) {
+    localStorage.setItem('awashBankAccounts', JSON.stringify(accounts));
 }
+
+function addBankAccount(bank, account, holder) {
+    const accounts = getBankAccounts();
+    const newId = accounts.length > 0 ? Math.max(...accounts.map(a => a.id)) + 1 : 1;
+    accounts.push({ id: newId, bank: bank.trim(), account: account.trim(), holder: holder.trim() });
+    saveBankAccounts(accounts);
+    return accounts;
+}
+
+function deleteBankAccount(id) {
+    let accounts = getBankAccounts();
+    accounts = accounts.filter(a => a.id !== id);
+    saveBankAccounts(accounts);
+    return accounts;
+}
+
+// ======================== የባንክ አካውንት ማሳያ በቼክአውት ========================
+function populatePaymentAccounts() {
+    const select = document.getElementById('paymentAccountSelect');
+    const accounts = getBankAccounts();
+    select.innerHTML = '<option value="">-- አካውንት ይምረጡ --</option>';
+    accounts.forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc.id;
+        opt.textContent = acc.bank + ' - ' + acc.account + ' (' + acc.holder + ')';
+        select.appendChild(opt);
+    });
+    // የመጀመሪያውን አካውንት አሳይ
+    if (accounts.length > 0) {
+        updatePaymentDisplay(accounts[0]);
+        select.value = accounts[0].id;
+    }
+}
+
+function updatePaymentDisplay(account) {
+    document.getElementById('bankAccountDisplay').textContent = account.bank + ': ' + account.account;
+    document.getElementById('bankNameDisplay').textContent = 'ስም፡ ' + account.holder;
+    document.getElementById('bankLabelDisplay').textContent = 'ባንክ፡ ' + account.bank;
+}
+
+// አካውንት ሲመረጥ ማሳያ ያዘምኑ
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('paymentAccountSelect');
+    if (select) {
+        select.addEventListener('change', function() {
+            const accounts = getBankAccounts();
+            const id = parseInt(this.value);
+            const account = accounts.find(a => a.id === id);
+            if (account) {
+                updatePaymentDisplay(account);
+            }
+        });
+    }
+});
 
 // ======================== ወቅታዊ እቃዎች ========================
 function getFeatured() {
@@ -758,25 +850,25 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const DEFAULT_PRODUCTS = [
-  { id:1, name:"ስማርት ብርሃን መቆጣጠሪያ", price:1200, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/smart1/300/300", description:"በርቀት መቆጣጠር የሚቻል ዘመናዊ መብራት፣ ኢነርጂ ይቆጥባል እንዲሁም ለረጅም ጊዜ የሚቆይ ነው" },
-  { id:2, name:"አውቶማቲክ እጥበት መሳሪያ", price:2500, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/auto1/300/300", description:"እጥበትን በራስ-ሰር የሚቆጣጠር፣ ጊዜን ይቆጥባል እና ምቹ ነው" },
-  { id:3, name:"የፊት መጠበቂያ ክሬም", price:450, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/cream1/300/300", description:"ተፈጥሯዊ ንጥረ ነገሮችን ይዟል፣ ፊትን ያነጻል እና ለስላሳ ያደርገዋል" },
-  { id:4, name:"ተፈጥሯዊ ዘይት", price:600, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/oil1/300/300", description:"ከተፈጥሮ የተውጣጣ ዘይት፣ ቆዳን ያለሰለስ እና ጤናማ ያደርገዋል" },
-  { id:5, name:"ስማርት ስልክ 128GB", price:18900, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/phoneX/300/300", description:"ከፍተኛ ፍጥነት ያለው ስልክ፣ ጥሩ ካሜራ እና ረጅም ባትሪ ያለው፣ ለቀን እና ለስራ ተስማሚ" },
-  { id:6, name:"የጆሮ ማዳመጫ ብሉቱዝ", price:3200, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/headX/300/300", description:"ከፍተኛ ጥራት ያለው ድምጽ፣ ረጅም የባትሪ ህይወት እና ምቹ ነው" },
-  { id:7, name:"ምቹ ሶፋ (3 ሰው)", price:8500, category:"የቤት እቃ", image:"https://picsum.photos/seed/sofa1/300/300", description:"ለስላሳ እና ምቹ ሶፋ፣ ዘመናዊ ዲዛይን ያለው፣ ለቤት ተስማሚ" },
-  { id:8, name:"የእንጨት ጠረጴዛ", price:4200, category:"የቤት እቃ", image:"https://picsum.photos/seed/table1/300/300", description:"ከጥራት እንጨት የተሰራ፣ ለረጅም ጊዜ የሚቆይ እና ያማረ ነው" },
-  { id:9, name:"ሲሚንቶ 50ኪግ", price:800, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/cement1/300/300", description:"ከፍተኛ ጥራት ያለው ሲሚንቶ፣ ለግንባታ ተስማሚ እና ጠንካራ ነው" },
-  { id:10, name:"ብረት ማጠፊያ", price:1500, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/iron1/300/300", description:"ጠንካራ እና ዘላቂ የብረት ማጠፊያ፣ ለሙያተኞች ተስማሚ" },
-  { id:11, name:"የበቆሎ ዱቄት 5ኪግ", price:300, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/flour1/300/300", description:"ንጹህ እና ጥራት ያለው የበቆሎ ዱቄት፣ ለምግብ ተስማሚ" },
-  { id:12, name:"የወተት ቅቤ 1ኪግ", price:450, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/butter1/300/300", description:"ከፍተኛ ጥራት ያለው የወተት ቅቤ፣ ለምግብነት ተስማሚ እና ጤናማ" },
-  { id:13, name:"የሴቶች ቀሚስ (ካታን)", price:1200, category:"የሴት አልባሳት", image:"https://picsum.photos/seed/dress1/300/300", description:"ዘመናዊ እና ምቹ የሴቶች ቀሚስ፣ ለቀን እና ለልዩ ዝግጅት" },
-  { id:14, name:"የወንዶች ሸሚዝ", price:800, category:"የወንዶች አልባሳት", image:"https://picsum.photos/seed/shirt1/300/300", description:"ከፍተኛ ጥራት ያለው ሸሚዝ፣ ለቀን እና ለልዩ ዝግጅት ተስማሚ" },
-  { id:15, name:"የልጅ ሱሪ (ቦይ)", price:500, category:"የህፃን ወንዶች አልባሳት", image:"https://picsum.photos/seed/kidboy1/300/300", description:"ለልጆች ምቹ እና ጠንካራ ሱሪ፣ ለትምህርት እና ለጨዋታ" },
-  { id:16, name:"የልጅ ቀሚስ (ገርል)", price:550, category:"የህፃን ሴቶች አልባሳት", image:"https://picsum.photos/seed/kidgirl1/300/300", description:"ቆንጆ እና ለስላሳ የልጅ ቀሚስ፣ ለልዩ ዝግጅት ተስማሚ" },
-  { id:17, name:"የርቀት መቆጣጠሪያ መኪና", price:700, category:"የልጆች መጫወቻ", image:"https://picsum.photos/seed/toycar1/300/300", description:"በርቀት የሚቆጣጠር መኪና፣ ለልጆች አስደሳች እና ትምህርታዊ" },
-  { id:18, name:"ማስታወሻ ደብተር (A4)", price:150, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/notebook1/300/300", description:"ጥራት ያለው የማስታወሻ ደብተር፣ ለትምህርት እና ለስራ ተስማሚ" },
-  { id:19, name:"ባለቀለም እርሳስ ስብስብ", price:280, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/pencil1/300/300", description:"12 ባለቀለም እርሳሶች፣ ለስዕል እና ለጽሁፍ ተስማሚ" }
+  { id:1, name:"ስማርት ብርሃን መቆጣጠሪያ", price:1200, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/smart1/300/300", description:"በርቀት መቆጣጠር የሚቻል ዘመናዊ መብራት፣ ኢነርጂ ይቆጥባል" },
+  { id:2, name:"አውቶማቲክ እጥበት መሳሪያ", price:2500, category:"ኑሮን የሚያቀሉ ዘመናዊ እቃዎች", image:"https://picsum.photos/seed/auto1/300/300", description:"እጥበትን በራስ-ሰር የሚቆጣጠር፣ ጊዜን ይቆጥባል" },
+  { id:3, name:"የፊት መጠበቂያ ክሬም", price:450, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/cream1/300/300", description:"ተፈጥሯዊ ንጥረ ነገሮችን ይዟል፣ ፊትን ያነጻል" },
+  { id:4, name:"ተፈጥሯዊ ዘይት", price:600, category:"የውበት መጠበቂያ", image:"https://picsum.photos/seed/oil1/300/300", description:"ከተፈጥሮ የተውጣጣ ዘይት፣ ቆዳን ያለሰለስ" },
+  { id:5, name:"ስማርት ስልክ 128GB", price:18900, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/phoneX/300/300", description:"ከፍተኛ ፍጥነት ያለው ስልክ፣ ጥሩ ካሜራ እና ረጅም ባትሪ" },
+  { id:6, name:"የጆሮ ማዳመጫ ብሉቱዝ", price:3200, category:"ኤሌክትሮኒክስ", image:"https://picsum.photos/seed/headX/300/300", description:"ከፍተኛ ጥራት ያለው ድምጽ፣ ረጅም የባትሪ ህይወት" },
+  { id:7, name:"ምቹ ሶፋ (3 ሰው)", price:8500, category:"የቤት እቃ", image:"https://picsum.photos/seed/sofa1/300/300", description:"ለስላሳ እና ምቹ ሶፋ፣ ዘመናዊ ዲዛይን" },
+  { id:8, name:"የእንጨት ጠረጴዛ", price:4200, category:"የቤት እቃ", image:"https://picsum.photos/seed/table1/300/300", description:"ከጥራት እንጨት የተሰራ፣ ለረጅም ጊዜ የሚቆይ" },
+  { id:9, name:"ሲሚንቶ 50ኪግ", price:800, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/cement1/300/300", description:"ከፍተኛ ጥራት ያለው ሲሚንቶ፣ ለግንባታ ተስማሚ" },
+  { id:10, name:"ብረት ማጠፊያ", price:1500, category:"የግንባታ እቃዎች", image:"https://picsum.photos/seed/iron1/300/300", description:"ጠንካራ እና ዘላቂ የብረት ማጠፊያ" },
+  { id:11, name:"የበቆሎ ዱቄት 5ኪግ", price:300, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/flour1/300/300", description:"ንጹህ እና ጥራት ያለው የበቆሎ ዱቄት" },
+  { id:12, name:"የወተት ቅቤ 1ኪግ", price:450, category:"ሱፐር ማርኬት", image:"https://picsum.photos/seed/butter1/300/300", description:"ከፍተኛ ጥራት ያለው የወተት ቅቤ፣ ለምግብነት ተስማሚ" },
+  { id:13, name:"የሴቶች ቀሚስ (ካታን)", price:1200, category:"የሴት አልባሳት", image:"https://picsum.photos/seed/dress1/300/300", description:"ዘመናዊ እና ምቹ የሴቶች ቀሚስ" },
+  { id:14, name:"የወንዶች ሸሚዝ", price:800, category:"የወንዶች አልባሳት", image:"https://picsum.photos/seed/shirt1/300/300", description:"ከፍተኛ ጥራት ያለው ሸሚዝ፣ ለቀን እና ለልዩ ዝግጅት" },
+  { id:15, name:"የልጅ ሱሪ (ቦይ)", price:500, category:"የህፃን ወንዶች አልባሳት", image:"https://picsum.photos/seed/kidboy1/300/300", description:"ለልጆች ምቹ እና ጠንካራ ሱሪ" },
+  { id:16, name:"የልጅ ቀሚስ (ገርል)", price:550, category:"የህፃን ሴቶች አልባሳት", image:"https://picsum.photos/seed/kidgirl1/300/300", description:"ቆንጆ እና ለስላሳ የልጅ ቀሚስ" },
+  { id:17, name:"የርቀት መቆጣጠሪያ መኪና", price:700, category:"የልጆች መጫወቻ", image:"https://picsum.photos/seed/toycar1/300/300", description:"በርቀት የሚቆጣጠር መኪና፣ ለልጆች አስደሳች" },
+  { id:18, name:"ማስታወሻ ደብተር (A4)", price:150, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/notebook1/300/300", description:"ጥራት ያለው የማስታወሻ ደብተር፣ ለትምህርት ተስማሚ" },
+  { id:19, name:"ባለቀለም እርሳስ ስብስብ", price:280, category:"የትምህርት ቤት ቁሳቁሶች", image:"https://picsum.photos/seed/pencil1/300/300", description:"12 ባለቀለም እርሳሶች፣ ለስዕል እና ለጽሁፍ" }
 ];
 
 // ======================== የLocalStorage አስተዳደር ========================
@@ -799,10 +891,10 @@ function saveProducts(prods) { localStorage.setItem('awashProducts', JSON.string
 let categories = loadCategories();
 let products = loadProducts();
 let featuredItems = getFeatured();
-let bankData = getBankData();
 let cart = JSON.parse(localStorage.getItem('awashCart')) || [];
 let currentCategory = "ሁሉም";
 let isAdminLoggedIn = false;
+let bankAccounts = getBankAccounts();
 
 // ======================== DOM ማጣቀሻዎች ========================
 const sidebar = document.getElementById('sidebar');
@@ -835,6 +927,8 @@ const custLat = document.getElementById('custLat');
 const custLng = document.getElementById('custLng');
 const bankAccountDisplay = document.getElementById('bankAccountDisplay');
 const bankNameDisplay = document.getElementById('bankNameDisplay');
+const bankLabelDisplay = document.getElementById('bankLabelDisplay');
+const paymentAccountSelect = document.getElementById('paymentAccountSelect');
 
 // Product Detail Modal
 const productDetailModal = document.getElementById('productDetailModal');
@@ -872,16 +966,14 @@ const addProductBtn = document.getElementById('addProductBtn');
 const productList = document.getElementById('productList');
 const newAdminPass = document.getElementById('newAdminPass');
 const changePassBtn = document.getElementById('changePassBtn');
-const bankAccountInput = document.getElementById('bankAccountInput');
-const bankNameInput = document.getElementById('bankNameInput');
-const updateBankBtn = document.getElementById('updateBankBtn');
-const bankStatus = document.getElementById('bankStatus');
 const featuredName = document.getElementById('featuredName');
 const featuredPrice = document.getElementById('featuredPrice');
 const featuredImage = document.getElementById('featuredImage');
 const featuredDesc = document.getElementById('featuredDesc');
 const addFeaturedBtn = document.getElementById('addFeaturedBtn');
 const featuredList = document.getElementById('featuredList');
+
+// Edit Product DOM
 const editProductSelect = document.getElementById('editProductSelect');
 const editProductName = document.getElementById('editProductName');
 const editProductPrice = document.getElementById('editProductPrice');
@@ -889,7 +981,16 @@ const editProductCategory = document.getElementById('editProductCategory');
 const editProductImage = document.getElementById('editProductImage');
 const editProductDesc = document.getElementById('editProductDesc');
 const editProductBtn = document.getElementById('editProductBtn');
+const editClearBtn = document.getElementById('editClearBtn');
 const editStatus = document.getElementById('editStatus');
+
+// Bank Account DOM
+const newBankName = document.getElementById('newBankName');
+const newBankAccount = document.getElementById('newBankAccount');
+const newBankHolder = document.getElementById('newBankHolder');
+const addBankAccountBtn = document.getElementById('addBankAccountBtn');
+const bankAccountList = document.getElementById('bankAccountList');
+const bankAccountStatus = document.getElementById('bankAccountStatus');
 
 // ======================== ዋና ተግባራት ========================
 function renderCategories() {
@@ -910,6 +1011,7 @@ function renderCategories() {
   });
   populateCategorySelects();
   renderCategoryList();
+  populateEditSelect();
 }
 
 function populateCategorySelects() {
@@ -923,6 +1025,9 @@ function populateCategorySelects() {
       sel.appendChild(opt);
     });
   });
+}
+
+function populateEditSelect() {
   editProductSelect.innerHTML = '';
   products.forEach(p => {
     const opt = document.createElement('option');
@@ -933,6 +1038,12 @@ function populateCategorySelects() {
   if (products.length > 0) {
     loadEditProduct(products[0]);
     editProductSelect.value = products[0].id;
+  } else {
+    editProductName.value = '';
+    editProductPrice.value = '';
+    editProductCategory.value = '';
+    editProductImage.value = '';
+    editProductDesc.value = '';
   }
   editProductSelect.onchange = function() {
     const id = parseInt(this.value);
@@ -947,6 +1058,8 @@ function loadEditProduct(product) {
   editProductCategory.value = product.category;
   editProductImage.value = product.image || '';
   editProductDesc.value = product.description || '';
+  editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
+  editStatus.style.color = '#2563eb';
 }
 
 function renderCategoryList() {
@@ -977,7 +1090,7 @@ function renderProductList() {
     `;
     productList.appendChild(div);
   });
-  populateCategorySelects();
+  populateEditSelect();
 }
 
 function loadProductForEdit(id) {
@@ -985,7 +1098,9 @@ function loadProductForEdit(id) {
   if (product) {
     editProductSelect.value = id;
     loadEditProduct(product);
-    document.getElementById('editStatus').textContent = '✅ ለማስተካከል ተዘጋጅቷል: ' + product.name;
+    editStatus.textContent = '✅ ለማስተካከል ተዘጋጅቷል: ' + product.name;
+    editStatus.style.color = '#16a34a';
+    document.querySelector('.admin-section:last-child').scrollIntoView({ behavior: 'smooth' });
   }
 }
 
@@ -1027,7 +1142,6 @@ function addFeaturedToCart(name, price) {
   }
 }
 
-// ===== የምርት ዝርዝር መስኮት መክፈቻ =====
 function openProductDetail(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
@@ -1048,7 +1162,6 @@ function closeProductDetail() {
   currentDetailProductId = null;
 }
 
-// ===== ከዝርዝር መስኮት ወደ ጋሪ መጨመር =====
 detailBuyBtn.addEventListener('click', function() {
   const id = parseInt(this.getAttribute('data-id'));
   const product = products.find(p => p.id === id);
@@ -1058,13 +1171,11 @@ detailBuyBtn.addEventListener('click', function() {
   }
 });
 
-// ===== መስኮቱን መዝጋት =====
 detailCloseBtn.addEventListener('click', closeProductDetail);
 productDetailModal.addEventListener('click', function(e) {
   if (e.target === this) closeProductDetail();
 });
 
-// ===== የምርት ካርዶችን ማሳየት (ከ"ሙሉውን ያንቡ" ጋር) =====
 function renderProducts(category = currentCategory, searchTerm = '') {
   let filtered = products;
   if (category !== 'ሁሉም') filtered = filtered.filter(p => p.category === category);
@@ -1126,7 +1237,7 @@ function deleteProduct(id) {
   saveProducts(products);
   renderProductList();
   renderProducts(currentCategory, searchInput.value);
-  populateCategorySelects();
+  populateEditSelect();
 }
 
 function deleteFeatured(index) {
@@ -1165,7 +1276,7 @@ function addProduct() {
   newProductName.value = ''; newProductPrice.value = ''; newProductImage.value = ''; newProductDesc.value = '';
   renderProductList();
   renderProducts(currentCategory, searchInput.value);
-  populateCategorySelects();
+  populateEditSelect();
   alert(`✅ "${name}" እቃ ተጨምሯል!`);
 }
 
@@ -1173,24 +1284,53 @@ function editProduct() {
   const id = parseInt(editProductSelect.value);
   const product = products.find(p => p.id === id);
   if (!product) { alert('እቃ አልተገኘም!'); return; }
+  
   const name = editProductName.value.trim();
   const price = parseFloat(editProductPrice.value);
   const category = editProductCategory.value;
   const image = editProductImage.value.trim() || 'https://picsum.photos/seed/' + Date.now() + '/300/300';
   const description = editProductDesc.value.trim() || 'ጠቃሚ እቃ';
+  
   if (!name) { alert('እባክዎ የእቃ ስም ይሙሉ!'); return; }
   if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
+  
+  const oldName = product.name;
   product.name = name;
   product.price = price;
   product.category = category;
   product.image = image;
   product.description = description;
+  
   saveProducts(products);
   renderProductList();
   renderProducts(currentCategory, searchInput.value);
-  populateCategorySelects();
-  document.getElementById('editStatus').textContent = '✅ እቃ በተሳካ ሁኔታ ተስተካክሏል!';
-  setTimeout(() => { document.getElementById('editStatus').textContent = ''; }, 3000);
+  populateEditSelect();
+  
+  editProductSelect.value = id;
+  loadEditProduct(product);
+  
+  editStatus.textContent = '✅ እቃ "' + oldName + '" በተሳካ ሁኔታ ተስተካክሏል!';
+  editStatus.style.color = '#16a34a';
+  setTimeout(() => {
+    editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
+    editStatus.style.color = '#2563eb';
+  }, 4000);
+  
+  alert('✅ "' + oldName + '" እቃ በተሳካ ሁኔታ ተስተካክሏል!');
+}
+
+function clearEditForm() {
+  const id = parseInt(editProductSelect.value);
+  const product = products.find(p => p.id === id);
+  if (product) {
+    loadEditProduct(product);
+    editStatus.textContent = '🔄 መረጃዎች ወደ መጀመሪያው ተመልሰዋል';
+    editStatus.style.color = '#f59e0b';
+    setTimeout(() => {
+      editStatus.textContent = '📝 ማስተካከል የምትፈልጉትን ይቀይሩ እና "💾 አስተካክል" ይጫኑ';
+      editStatus.style.color = '#2563eb';
+    }, 2000);
+  }
 }
 
 function addFeatured() {
@@ -1208,17 +1348,63 @@ function addFeatured() {
   alert(`✅ "${name}" ወቅታዊ እቃ ተጨምሯል!`);
 }
 
-function updateBank() {
-  const account = bankAccountInput.value.trim();
-  const name = bankNameInput.value.trim();
-  if (!account) { alert('እባክዎ የባንክ አካውንት ቁጥር ያስገቡ!'); return; }
-  if (!name) { alert('እባክዎ የባንክ ባለቤት ስም ያስገቡ!'); return; }
-  saveBankData(account, name);
-  bankData = getBankData();
-  bankAccountDisplay.textContent = 'CBE: ' + bankData.account;
-  bankNameDisplay.textContent = 'ስም፡ ' + bankData.name;
-  bankStatus.textContent = '✅ የባንክ መረጃ ተሻሽሏል!';
-  setTimeout(() => { bankStatus.textContent = ''; }, 3000);
+// ======================== የባንክ አካውንት ተግባራት ========================
+function renderBankAccounts() {
+    const accounts = getBankAccounts();
+    bankAccountList.innerHTML = '';
+    if (accounts.length === 0) {
+        bankAccountList.innerHTML = '<p class="text-sm" style="color:#64748b;">ምንም የባንክ አካውንት አልተገኘም</p>';
+        return;
+    }
+    accounts.forEach(acc => {
+        const div = document.createElement('div');
+        div.className = 'admin-list-item';
+        div.innerHTML = `
+            <span class="item-info">🏦 ${acc.bank} - ${acc.account} <small>(${acc.holder})</small></span>
+            <button class="admin-btn-danger" onclick="deleteBankAccountHandler(${acc.id})">🗑️ ሰርዝ</button>
+        `;
+        bankAccountList.appendChild(div);
+    });
+}
+
+function addBankAccountHandler() {
+    const bank = newBankName.value.trim();
+    const account = newBankAccount.value.trim();
+    const holder = newBankHolder.value.trim();
+    
+    if (!bank) { alert('እባክዎ የባንክ ስም ያስገቡ!'); return; }
+    if (!account) { alert('እባክዎ የአካውንት ቁጥር ያስገቡ!'); return; }
+    if (!holder) { alert('እባክዎ የባንክ ባለቤት ስም ያስገቡ!'); return; }
+    
+    const accounts = addBankAccount(bank, account, holder);
+    newBankName.value = '';
+    newBankAccount.value = '';
+    newBankHolder.value = '';
+    renderBankAccounts();
+    populatePaymentAccounts();
+    bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተጨምሯል!';
+    bankAccountStatus.className = 'text-sm mt-8 text-success';
+    setTimeout(() => {
+        bankAccountStatus.textContent = '';
+    }, 3000);
+}
+
+function deleteBankAccountHandler(id) {
+    if (!confirm('ይህን የባንክ አካውንት መሰረዝ እርግጠኛ ነዎት?')) return;
+    const accounts = deleteBankAccount(id);
+    renderBankAccounts();
+    populatePaymentAccounts();
+    // አሁን ያለውን አካውንት እንደገና አሳይ
+    const currentAccounts = getBankAccounts();
+    if (currentAccounts.length > 0) {
+        updatePaymentDisplay(currentAccounts[0]);
+        paymentAccountSelect.value = currentAccounts[0].id;
+    }
+    bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተሰርዟል!';
+    bankAccountStatus.className = 'text-sm mt-8 text-success';
+    setTimeout(() => {
+        bankAccountStatus.textContent = '';
+    }, 3000);
 }
 
 // ======================== የአስተዳዳሪ ፓነል መክፈቻ ========================
@@ -1235,12 +1421,12 @@ adminOpenBtn.addEventListener('click', () => {
   adminLoginSection.style.display = 'block';
   adminContent.style.display = 'none';
   adminPassword.value = '';
-  bankAccountInput.value = bankData.account;
-  bankNameInput.value = bankData.name;
   renderCategoryList();
   renderProductList();
   renderFeaturedList();
+  renderBankAccounts();
   populateCategorySelects();
+  populateEditSelect();
 });
 
 adminCloseBtn.addEventListener('click', () => {
@@ -1257,12 +1443,12 @@ adminLoginBtn.addEventListener('click', () => {
     isAdminLoggedIn = true;
     adminLoginSection.style.display = 'none';
     adminContent.style.display = 'block';
-    bankAccountInput.value = bankData.account;
-    bankNameInput.value = bankData.name;
     renderCategoryList();
     renderProductList();
     renderFeaturedList();
+    renderBankAccounts();
     populateCategorySelects();
+    populateEditSelect();
   } else {
     alert('❌ የተሳሳተ ፓስዎርድ!');
   }
@@ -1280,8 +1466,10 @@ addCategoryBtn.addEventListener('click', addCategory);
 newCategoryInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addCategory(); });
 addProductBtn.addEventListener('click', addProduct);
 addFeaturedBtn.addEventListener('click', addFeatured);
-updateBankBtn.addEventListener('click', updateBank);
+addBankAccountBtn.addEventListener('click', addBankAccountHandler);
+
 editProductBtn.addEventListener('click', editProduct);
+editClearBtn.addEventListener('click', clearEditForm);
 
 // ======================== የጂፒኤስ ========================
 getLocationBtn.addEventListener('click', function() {
@@ -1386,11 +1574,12 @@ checkoutBtn.addEventListener('click', function() {
   if (cart.length === 0) { alert('እባክዎ መጀመሪያ እቃዎችን ወደ ጋሪ ይጨምሩ!'); return; }
   checkoutFormModal.classList.add('active');
   custName.value = ''; custPhone.value = ''; custAddress.value = ''; receiptFile.value = '';
+  populatePaymentAccounts();
 });
 
 cancelFormBtn.addEventListener('click', function() { checkoutFormModal.classList.remove('active'); });
 
-// ======================== ቼክአውት መላክ ========================
+// ======================== ቼክአውት መላክ (ከአካውንት መምረጫ ጋር) ========================
 checkoutForm.addEventListener('submit', function(e) {
   e.preventDefault();
   const name = custName.value.trim();
@@ -1399,13 +1588,21 @@ checkoutForm.addEventListener('submit', function(e) {
   const file = receiptFile.files[0];
   const lat = custLat.value.trim();
   const lng = custLng.value.trim();
+  const accountId = parseInt(paymentAccountSelect.value);
 
   if (!file) { alert('⚠️ የክፍያ ደረሰኝ (screenshot) ያስገቡ!'); return; }
   if (!name || !phone || !address) { alert('ሁሉንም መስኮች ይሙሉ!'); return; }
+  if (!accountId) { alert('እባክዎ ለክፍያ የሚፈልጉትን አካውንት ይምረጡ!'); return; }
 
+  const accounts = getBankAccounts();
+  const selectedAccount = accounts.find(a => a.id === accountId);
+  if (!selectedAccount) { alert('የተመረጠው አካውንት አልተገኘም!'); return; }
+
+  // የትዕዛዝ ዝርዝር አዘጋጅ
   let orderDetails = '🛍️ አዋሽ ኦንላይን ገበያ - አዲስ ትዕዛዝ%0A';
   orderDetails += `👤 ስም፦ ${name}%0A📞 ስልክ፦ ${phone}%0A📍 አድራሻ፦ ${address}%0A`;
   if (lat && lng) { orderDetails += `🗺️ ቦታ፦ https://www.google.com/maps?q=${lat},${lng}%0A`; }
+  orderDetails += `🏦 ክፍያ ወደ፦ ${selectedAccount.bank} - ${selectedAccount.account} (${selectedAccount.holder})%0A`;
   orderDetails += '%0A📦 የተገዙ እቃዎች፦%0A';
   let total = 0;
   let itemsList = [];
@@ -1416,12 +1613,11 @@ checkoutForm.addEventListener('submit', function(e) {
     itemsList.push({ name: item.name, qty: item.quantity, price: item.price, subtotal: subtotal });
   });
   orderDetails += `%0A💰 ጠቅላላ፦ ${total.toLocaleString()} ብር`;
-  orderDetails += `%0A%0A💳 ክፍያ ወደ፦ CBE ${bankData.account} (${bankData.name})`;
   orderDetails += `%0A%0A📎 ደረሰኝ (screenshot) ከዚህ በታች ተያይዟል።`;
 
   const sendToTelegram = function() {
     if (BOT_TOKEN === 'YOUR_BOT_TOKEN' || CHAT_ID === 'YOUR_CHAT_ID') {
-      showReceipt(name, phone, address, itemsList, total);
+      showReceipt(name, phone, address, itemsList, total, selectedAccount);
       return Promise.resolve();
     }
     return new Promise((resolve, reject) => {
@@ -1452,7 +1648,7 @@ checkoutForm.addEventListener('submit', function(e) {
     });
   };
 
-  const showReceipt = function(name, phone, address, items, total) {
+  const showReceipt = function(name, phone, address, items, total, account) {
     const now = new Date();
     const dateStr = now.toLocaleDateString('am-ET', { 
       year: 'numeric', month: 'long', day: 'numeric',
@@ -1482,6 +1678,10 @@ checkoutForm.addEventListener('submit', function(e) {
         <span class="label">📍 አድራሻ</span>
         <span class="value">${address}</span>
       </div>
+      <div class="receipt-row">
+        <span class="label">🏦 የክፍያ አካውንት</span>
+        <span class="value">${account.bank} - ${account.account} (${account.holder})</span>
+      </div>
       <div class="receipt-items">
         <div style="font-weight:600; color:#0b2b4f; margin-bottom:4px;">🛒 የተገዙ እቃዎች</div>
         ${itemsHtml}
@@ -1501,7 +1701,7 @@ checkoutForm.addEventListener('submit', function(e) {
     .then(() => {
       cart = []; saveCart(); updateBadge(); closeCartModal();
       checkoutFormModal.classList.remove('active');
-      showReceipt(name, phone, address, itemsList, total);
+      showReceipt(name, phone, address, itemsList, total, selectedAccount);
     })
     .catch(err => {
       alert('❌ ስህተት፦ ' + err.message);
@@ -1523,11 +1723,11 @@ function init() {
   renderFeatured();
   renderProducts('ሁሉም', '');
   updateBadge();
-  bankAccountDisplay.textContent = 'CBE: ' + bankData.account;
-  bankNameDisplay.textContent = 'ስም፡ ' + bankData.name;
+  populatePaymentAccounts();
+  renderBankAccounts();
 }
 init();
-console.log('🚀 Awash Online Gebeya ተጀምሯል! (ሙሉ ዝርዝር መስኮት ተጨምሯል)');
+console.log('🚀 Awash Online Gebeya ተጀምሯል! (አካውንት መጨመሪያ ተጨምሯል)');
 </script>
 </body>
 </html>
