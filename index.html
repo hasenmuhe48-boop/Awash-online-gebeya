@@ -726,7 +726,6 @@ const APPRWRITE_PROJECT_ID = 'awash-online-gebeya';
 const APPRWRITE_DATABASE_ID = '6a4a0502003426d7fbb0';
 const APPRWRITE_API_KEY = 'standard_afd25bb7829adc4e6024a79b0b8b7115ba0766747be0e6cf9793368db7e5081029ee17023d8a755d3c7b71917d7bb590a20699946b215a1b4d45f1759ea196f748ec8653c4d3b341a608e3887e276bb2b7a0b1776855395b8a2a74c9c48dedb8092b80883352511c685fa5b51631056f1b5eee95685cead2158a4d20adf9748b';
 
-// ኮሌክሽን IDs
 const COLLECTION_PRODUCTS = 'products';
 const COLLECTION_CATEGORIES = 'categories';
 const COLLECTION_ORDERS = 'orders';
@@ -804,13 +803,13 @@ function getDefaultBankAccounts() {
 }
 
 // ============================================================
-// 📥 ውሂብ መጫኛ ተግባራት
+// 📥 ውሂብ መጫኛ ተግባራት (ከAppwrite ወይም LocalStorage)
 // ============================================================
 async function loadProducts() {
     if (appwriteConnected) {
         try {
             const response = await databases.listDocuments(APPRWRITE_DATABASE_ID, COLLECTION_PRODUCTS);
-            if (response && response.documents) {
+            if (response && response.documents && response.documents.length > 0) {
                 return response.documents.map(doc => ({
                     id: doc.$id,
                     name: doc.name,
@@ -824,19 +823,25 @@ async function loadProducts() {
             console.warn('⚠️ ከAppwrite ምርቶችን ማግኘት አልተቻለም፣ LocalStorage ን እንጠቀማለን:', error);
         }
     }
+    // LocalStorage መመለስ
     const stored = localStorage.getItem('awashProducts');
     if (stored) {
-        try { return JSON.parse(stored); }
-        catch { return getDefaultProducts(); }
+        try { 
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.length > 0) return parsed;
+        } catch { /* ignore */ }
     }
-    return getDefaultProducts();
+    // ነባር መረጃ መመለስ
+    const defaults = getDefaultProducts();
+    localStorage.setItem('awashProducts', JSON.stringify(defaults));
+    return defaults;
 }
 
 async function loadCategories() {
     if (appwriteConnected) {
         try {
             const response = await databases.listDocuments(APPRWRITE_DATABASE_ID, COLLECTION_CATEGORIES);
-            if (response && response.documents) {
+            if (response && response.documents && response.documents.length > 0) {
                 const cats = response.documents.map(doc => doc.name);
                 return ['ሁሉም', ...cats];
             }
@@ -846,17 +851,21 @@ async function loadCategories() {
     }
     const stored = localStorage.getItem('awashCategories');
     if (stored) {
-        try { return JSON.parse(stored); }
-        catch { return getDefaultCategories(); }
+        try { 
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.length > 0) return parsed;
+        } catch { /* ignore */ }
     }
-    return getDefaultCategories();
+    const defaults = getDefaultCategories();
+    localStorage.setItem('awashCategories', JSON.stringify(defaults));
+    return defaults;
 }
 
 async function loadBankAccounts() {
     if (appwriteConnected) {
         try {
             const response = await databases.listDocuments(APPRWRITE_DATABASE_ID, COLLECTION_BANK_ACCOUNTS);
-            if (response && response.documents) {
+            if (response && response.documents && response.documents.length > 0) {
                 return response.documents.map(doc => ({
                     id: doc.$id,
                     bank: doc.bank,
@@ -870,31 +879,36 @@ async function loadBankAccounts() {
     }
     const stored = localStorage.getItem('awashBankAccounts');
     if (stored) {
-        try { return JSON.parse(stored); }
-        catch { return getDefaultBankAccounts(); }
+        try { 
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.length > 0) return parsed;
+        } catch { /* ignore */ }
     }
-    return getDefaultBankAccounts();
+    const defaults = getDefaultBankAccounts();
+    localStorage.setItem('awashBankAccounts', JSON.stringify(defaults));
+    return defaults;
 }
 
 // ============================================================
-// 💾 ውሂብ ማስቀመጫ ተግባራት
+// 💾 ውሂብ ማስቀመጫ ተግባራት (ወደ Appwrite እና LocalStorage)
 // ============================================================
 async function saveProductToAppwrite(name, price, category, image, description) {
+    let result = null;
     if (appwriteConnected) {
         try {
-            const response = await databases.createDocument(
+            result = await databases.createDocument(
                 APPRWRITE_DATABASE_ID,
                 COLLECTION_PRODUCTS,
                 'unique()',
                 { name, price, category, image, description }
             );
-            return response;
         } catch (error) {
-            console.warn('⚠️ ወደ Appwrite ምርት ማስቀመጥ አልተቻለም፣ LocalStorage ላይ እናስቀምጣለን:', error);
+            console.warn('⚠️ ወደ Appwrite ምርት ማስቀመጥ አልተቻለም:', error);
         }
     }
-    const products = JSON.parse(localStorage.getItem('awashProducts') || JSON.stringify(getDefaultProducts()));
-    const newId = 'local_' + Date.now();
+    // ሁልጊዜ LocalStorage ላይ አስቀምጥ
+    const products = await loadProducts();
+    const newId = result ? result.$id : 'local_' + Date.now();
     products.push({ id: newId, name, price, category, image, description });
     localStorage.setItem('awashProducts', JSON.stringify(products));
     return { $id: newId };
@@ -903,18 +917,18 @@ async function saveProductToAppwrite(name, price, category, image, description) 
 async function updateProductInAppwrite(docId, name, price, category, image, description) {
     if (appwriteConnected) {
         try {
-            const response = await databases.updateDocument(
+            await databases.updateDocument(
                 APPRWRITE_DATABASE_ID,
                 COLLECTION_PRODUCTS,
                 docId,
                 { name, price, category, image, description }
             );
-            return response;
         } catch (error) {
-            console.warn('⚠️ በAppwrite ምርት ማስተካከል አልተቻለም፣ LocalStorage ላይ እናስተካክላለን:', error);
+            console.warn('⚠️ በAppwrite ምርት ማስተካከል አልተቻለም:', error);
         }
     }
-    const products = JSON.parse(localStorage.getItem('awashProducts') || JSON.stringify(getDefaultProducts()));
+    // LocalStorage ላይ አስተካክል
+    const products = await loadProducts();
     const index = products.findIndex(p => p.id === docId);
     if (index !== -1) {
         products[index] = { ...products[index], name, price, category, image, description };
@@ -927,12 +941,12 @@ async function deleteProductFromAppwrite(docId) {
     if (appwriteConnected) {
         try {
             await databases.deleteDocument(APPRWRITE_DATABASE_ID, COLLECTION_PRODUCTS, docId);
-            return true;
         } catch (error) {
-            console.warn('⚠️ ከAppwrite ምርት መሰረዝ አልተቻለም፣ ከLocalStorage እንሰርዛለን:', error);
+            console.warn('⚠️ ከAppwrite ምርት መሰረዝ አልተቻለም:', error);
         }
     }
-    const products = JSON.parse(localStorage.getItem('awashProducts') || JSON.stringify(getDefaultProducts()));
+    // ከLocalStorage ሰርዝ
+    const products = await loadProducts();
     const filtered = products.filter(p => p.id !== docId);
     localStorage.setItem('awashProducts', JSON.stringify(filtered));
     return true;
@@ -941,18 +955,17 @@ async function deleteProductFromAppwrite(docId) {
 async function saveCategoryToAppwrite(name) {
     if (appwriteConnected) {
         try {
-            const response = await databases.createDocument(
+            await databases.createDocument(
                 APPRWRITE_DATABASE_ID,
                 COLLECTION_CATEGORIES,
                 'unique()',
                 { name }
             );
-            return response;
         } catch (error) {
-            console.warn('⚠️ ወደ Appwrite ካታጎሪ ማስቀመጥ አልተቻለም፣ LocalStorage ላይ እናስቀምጣለን:', error);
+            console.warn('⚠️ ወደ Appwrite ካታጎሪ ማስቀመጥ አልተቻለም:', error);
         }
     }
-    const categories = JSON.parse(localStorage.getItem('awashCategories') || JSON.stringify(getDefaultCategories()));
+    const categories = await loadCategories();
     if (!categories.includes(name)) {
         categories.push(name);
         localStorage.setItem('awashCategories', JSON.stringify(categories));
@@ -960,36 +973,20 @@ async function saveCategoryToAppwrite(name) {
     return { $id: 'local_' + Date.now() };
 }
 
-async function deleteCategoryFromAppwrite(docId, name) {
-    if (appwriteConnected) {
-        try {
-            await databases.deleteDocument(APPRWRITE_DATABASE_ID, COLLECTION_CATEGORIES, docId);
-            return true;
-        } catch (error) {
-            console.warn('⚠️ ከAppwrite ካታጎሪ መሰረዝ አልተቻለም፣ ከLocalStorage እንሰርዛለን:', error);
-        }
-    }
-    const categories = JSON.parse(localStorage.getItem('awashCategories') || JSON.stringify(getDefaultCategories()));
-    const filtered = categories.filter(c => c !== name);
-    localStorage.setItem('awashCategories', JSON.stringify(filtered));
-    return true;
-}
-
 async function saveBankAccountToAppwrite(bank, account, holder) {
     if (appwriteConnected) {
         try {
-            const response = await databases.createDocument(
+            await databases.createDocument(
                 APPRWRITE_DATABASE_ID,
                 COLLECTION_BANK_ACCOUNTS,
                 'unique()',
                 { bank, account, holder }
             );
-            return response;
         } catch (error) {
-            console.warn('⚠️ ወደ Appwrite የባንክ አካውንት ማስቀመጥ አልተቻለም፣ LocalStorage ላይ እናስቀምጣለን:', error);
+            console.warn('⚠️ ወደ Appwrite የባንክ አካውንት ማስቀመጥ አልተቻለም:', error);
         }
     }
-    const accounts = JSON.parse(localStorage.getItem('awashBankAccounts') || JSON.stringify(getDefaultBankAccounts()));
+    const accounts = await loadBankAccounts();
     const newId = 'local_' + Date.now();
     accounts.push({ id: newId, bank, account, holder });
     localStorage.setItem('awashBankAccounts', JSON.stringify(accounts));
@@ -1000,12 +997,11 @@ async function deleteBankAccountFromAppwrite(docId) {
     if (appwriteConnected) {
         try {
             await databases.deleteDocument(APPRWRITE_DATABASE_ID, COLLECTION_BANK_ACCOUNTS, docId);
-            return true;
         } catch (error) {
-            console.warn('⚠️ ከAppwrite የባንክ አካውንት መሰረዝ አልተቻለም፣ ከLocalStorage እንሰርዛለን:', error);
+            console.warn('⚠️ ከAppwrite የባንክ አካውንት መሰረዝ አልተቻለም:', error);
         }
     }
-    const accounts = JSON.parse(localStorage.getItem('awashBankAccounts') || JSON.stringify(getDefaultBankAccounts()));
+    const accounts = await loadBankAccounts();
     const filtered = accounts.filter(a => a.id !== docId);
     localStorage.setItem('awashBankAccounts', JSON.stringify(filtered));
     return true;
@@ -1115,25 +1111,21 @@ const bankAccountList = document.getElementById('bankAccountList');
 const bankAccountStatus = document.getElementById('bankAccountStatus');
 
 // ============================================================
-// የተሻሻለ የውሂብ መጫኛ
+// የውሂብ ማዘመኛ ተግባር (ለሁለቱም ገጾች)
 // ============================================================
-async function loadAllData() {
+async function refreshAllData() {
     try {
-        productGrid.innerHTML = `
-            <div class="loading-spinner">
-                <i class="fas fa-spinner fa-pulse"></i>
-                እቃዎች እየተጫኑ ነው...
-            </div>
-        `;
-        
+        // ሁሉንም ውሂቦች ከAppwrite/LocalStorage ጫን
         products = await loadProducts();
         categories = await loadCategories();
         bankAccounts = await loadBankAccounts();
         
+        // በLocalStorage ውስጥ አስቀምጥ
         localStorage.setItem('awashProducts', JSON.stringify(products));
         localStorage.setItem('awashCategories', JSON.stringify(categories));
         localStorage.setItem('awashBankAccounts', JSON.stringify(bankAccounts));
         
+        // ሁሉንም ገጾች አዘምን
         renderCategories();
         renderProducts();
         renderFeatured();
@@ -1143,16 +1135,9 @@ async function loadAllData() {
         populateCategorySelects();
         populateEditSelect();
         
-        console.log('✅ ሁሉም ውሂቦች በተሳካ ሁኔታ ተጭነዋል!');
+        console.log('✅ ሁሉም ውሂቦች ተዘምነዋል!');
     } catch (error) {
-        console.error('❌ ውሂብ ማግኘት አልተቻለም:', error);
-        productGrid.innerHTML = `
-            <div class="error-msg">
-                <i class="fas fa-exclamation-circle"></i>
-                ውሂብ ማግኘት አልተቻለም!<br />
-                <small style="color:#64748b;">እባክዎ ገጹን እንደገና ያድሱ ወይም በኋላ ይሞክሩ።</small>
-            </div>
-        `;
+        console.error('❌ ውሂብ ማዘመን አልተቻለም:', error);
     }
 }
 
@@ -1445,7 +1430,6 @@ paymentAccountSelect.addEventListener('change', function() {
 // ============================================================
 adminOpenBtn.addEventListener('click', () => {
     adminModal.classList.add('active');
-    // ፓስዎርድ መግቢያ እንዲታይ እና ይዘቱ እንዲደበቅ
     adminLoginSection.style.display = 'block';
     adminContent.style.display = 'none';
     adminPassword.value = '';
@@ -1470,7 +1454,6 @@ adminLoginBtn.addEventListener('click', () => {
     const pass = adminPassword.value.trim();
     if (verifyAdminPassword(pass)) {
         isAdminLoggedIn = true;
-        // ፓስዎርድ መግቢያ ደብቅ እና ይዘቱ አሳይ
         adminLoginSection.style.display = 'none';
         adminContent.style.display = 'block';
         renderBankAccounts();
@@ -1522,9 +1505,7 @@ async function deleteBankAccountHandler(id) {
     if (!confirm('ይህን የባንክ አካውንት መሰረዝ እርግጠኛ ነዎት?')) return;
     try {
         await deleteBankAccountFromAppwrite(id);
-        bankAccounts = await loadBankAccounts();
-        renderBankAccounts();
-        populatePaymentAccounts();
+        await refreshAllData();
         bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተሰርዟል!';
         bankAccountStatus.className = 'text-sm mt-8 text-success';
         setTimeout(() => { bankAccountStatus.textContent = ''; }, 3000);
@@ -1545,9 +1526,7 @@ addBankAccountBtn.addEventListener('click', async function() {
         newBankName.value = '';
         newBankAccount.value = '';
         newBankHolder.value = '';
-        bankAccounts = await loadBankAccounts();
-        renderBankAccounts();
-        populatePaymentAccounts();
+        await refreshAllData();
         bankAccountStatus.textContent = '✅ አካውንት በተሳካ ሁኔታ ተጨምሯል!';
         bankAccountStatus.className = 'text-sm mt-8 text-success';
         setTimeout(() => { bankAccountStatus.textContent = ''; }, 3000);
@@ -1566,9 +1545,7 @@ addCategoryBtn.addEventListener('click', async function() {
     try {
         await saveCategoryToAppwrite(name);
         newCategoryInput.value = '';
-        categories = await loadCategories();
-        renderCategories();
-        renderProducts();
+        await refreshAllData();
         alert(`✅ "${name}" ካታጎሪ ተጨምሯል!`);
     } catch (error) {
         alert('❌ ካታጎሪ መጨመር አልተቻለም!');
@@ -1580,7 +1557,7 @@ newCategoryInput.addEventListener('keydown', (e) => {
 });
 
 // ============================================================
-// ምርቶች (Admin)
+// ምርቶች (Admin) - ወደ ዋና ገጽ የሚያመሳስል
 // ============================================================
 function populateEditSelect() {
     editProductSelect.innerHTML = '';
@@ -1625,9 +1602,7 @@ addProductBtn.addEventListener('click', async function() {
         newProductPrice.value = '';
         newProductImage.value = '';
         newProductDesc.value = '';
-        products = await loadProducts();
-        renderProducts();
-        populateEditSelect();
+        await refreshAllData();
         alert(`✅ "${name}" እቃ ተጨምሯል!`);
     } catch (error) {
         alert('❌ እቃ መጨመር አልተቻለም!');
@@ -1647,9 +1622,7 @@ editProductBtn.addEventListener('click', async function() {
     if (isNaN(price) || price <= 0) { alert('እባክዎ ትክክለኛ ዋጋ ያስገቡ!'); return; }
     try {
         await updateProductInAppwrite(id, name, price, category, image, description);
-        products = await loadProducts();
-        renderProducts();
-        populateEditSelect();
+        await refreshAllData();
         editStatus.textContent = `✅ እቃ "${product.name}" በተሳካ ሁኔታ ተስተካክሏል!`;
         editStatus.style.color = '#16a34a';
         setTimeout(() => {
@@ -1977,7 +1950,7 @@ receiptModal.addEventListener('click', function(e) {
 // ============================================================
 async function init() {
     checkAdminVisibility();
-    await loadAllData();
+    await refreshAllData();
     renderFeaturedList();
     renderBankAccounts();
     updateBadge();
@@ -1988,7 +1961,9 @@ async function init() {
 }
 
 init();
-console.log('🚀 Awash Online Gebeya ተጀምሯል! (ማርሽ አዝራር በURL ብቻ)');
+console.log('🚀 Awash Online Gebeya ተጀምሯል! (አስተዳዳሪ እና ዋና ገጽ የተመሳሰሉ)');
 </script>
 </body>
 </html>
+
+
