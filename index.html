@@ -601,25 +601,33 @@
         const COLLECTION_ORDERS = 'orders';
         const COLLECTION_BANK_ACCOUNTS = 'bank_accounts';
 
-        // ============================================================
-        // Appwrite ክላይንት
-        // ============================================================
-        let client = null;
-        let databases = null;
-        let appwriteConnected = false;
+// ============================================================
+// Appwrite ክላይንት (የተሻሻለ - ከስህተት አያያዝ ጋር)
+// ============================================================
+let client = null;
+let databases = null;
+let appwriteConnected = false;
 
-        try {
-            client = new Appwrite.Client();
-            client.setEndpoint(APPRWRITE_ENDPOINT)
-                .setProject(APPRWRITE_PROJECT_ID)
-                .setKey(APPRWRITE_API_KEY);
-            databases = new Appwrite.Databases(client);
-            appwriteConnected = true;
-            console.log('✅ Appwrite ተገናኝቷል!');
-        } catch (error) {
-            console.error('❌ Appwrite መገናኘት አልተቻለም:', error);
-            appwriteConnected = false;
-        }
+try {
+    console.log('🔌 Appwrite እየተገናኘ ነው...');
+    console.log('📌 Project ID:', APPRWRITE_PROJECT_ID);
+    console.log('📌 Database ID:', APPRWRITE_DATABASE_ID);
+    console.log('📌 Endpoint:', APPRWRITE_ENDPOINT);
+    
+    client = new Appwrite.Client();
+    client
+        .setEndpoint(APPRWRITE_ENDPOINT)
+        .setProject(APPRWRITE_PROJECT_ID)
+        .setKey(APPRWRITE_API_KEY);
+    databases = new Appwrite.Databases(client);
+    appwriteConnected = true;
+    console.log('✅ Appwrite ተገናኝቷል!');
+} catch (error) {
+    console.error('❌ Appwrite መገናኘት አልተቻለም:');
+    console.error('📝 ዝርዝር ስህተት:', error);
+    console.error('📝 መልእክት:', error.message);
+    appwriteConnected = false;
+}
 
         // ============================================================
         // ቴሌግራም
